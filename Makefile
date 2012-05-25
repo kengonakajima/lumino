@@ -6,7 +6,7 @@ LUA=/usr/local/bin/lua
 LUVIT=/usr/local/bin/luvit
 else
 # linux(ubuntu default)
-LUA=/usr/bin/lua
+LUA=/tmp/lua-5.1/src/lua
 LUVIT=/tmp/luvit/build/luvit
 endif
 
@@ -27,7 +27,8 @@ moaitest: $(MOAI)
 # configs for travis ubuntu workers 
 $(LUVIT) :
 	cd /tmp; git clone https://github.com/luvit/luvit
-	cd /tmp/luvit; make; make install
+	cd /tmp/luvit; make
 
 $(LUA) :
-	apt-get install lua5.1
+	cd /tmp; curl http://www.lua.org/ftp/lua-5.1.tar.gz > lua-5.1.tar.gz
+	cd /tmp; tar zxf lua-5.1.tar.gz; cd lua-5.1; make linux
