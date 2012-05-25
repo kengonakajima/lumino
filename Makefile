@@ -1,12 +1,13 @@
-LUVIT=/usr/local/bin/luvit
 MOAI=~/bin/moai
 
 ifeq ($(shell uname -sm | sed -e s,x86_64,i386,),Darwin i386)
 #osx(homebrew default)
 LUA=/usr/local/bin/lua
+LUVIT=/usr/local/bin/luvit
 else
 # linux(ubuntu default)
 LUA=/usr/bin/lua
+LUVIT=/tmp/luvit/build/luvit
 endif
 
 
