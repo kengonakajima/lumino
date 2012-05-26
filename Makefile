@@ -11,7 +11,7 @@ LUVIT=/tmp/luvit/build/luvit
 endif
 
 test:
-	ping github.com
+	ping -c 4 github.com
 	curl https://github.com/
 
 xxxx_test: luatest luvittest
