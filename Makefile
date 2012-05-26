@@ -10,8 +10,11 @@ LUA=/tmp/lua-5.1/src/lua
 LUVIT=/tmp/luvit/build/luvit
 endif
 
+test:
+	ping github.com
+	curl https://github.com/
 
-test: luatest luvittest
+xxxx_test: luatest luvittest
 	echo lua and luvit test done
 
 testall: luatest luvittest moaitest
