@@ -10,11 +10,12 @@ LUA=/tmp/lua-5.1/src/lua
 LUVIT=/tmp/luvit/build/luvit
 endif
 
-test:
-	ping -c 4 github.com
-	curl https://github.com/
+# for travis-ci DNS resolv error..
+#test:
+#	ping -c 4 github.com
+#	curl https://github.com/
 
-xxxx_test: luatest luvittest
+test: luatest luvittest
 	echo lua and luvit test done
 
 testall: luatest luvittest moaitest
