@@ -11,12 +11,16 @@ LUVIT=/tmp/luvit/build/luvit
 endif
 
 # for travis-ci DNS resolv error..
-test:
+
+
+test: luatest luvittest
+	echo lua and luvit test done
+
+hogetest:
 	ping -c 4 github.com
 	curl https://github.com/
 
-xxxxxxxxtest: luatest luvittest
-	echo lua and luvit test done
+
 
 testall: luatest luvittest moaitest
 
