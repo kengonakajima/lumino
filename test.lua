@@ -284,6 +284,17 @@ assert( c:get() )
 assert( c:get() == false )
 
 
+-- moai test
+if MOAISim then
+  print("moai net")
+  local net = _G.LuvitNetEmu
+  net.createConnection( 64444, "127.0.0.1", function(cli)
+    cli:on("error", function(e)  end)
+    cli:on("data", function(e) end)
+    cli:write("hello world")
+    
+  end)
+end
 
 
 print( "test done\n")
