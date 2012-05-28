@@ -1,6 +1,9 @@
 lumino
 ======
 
+<a href="http://travis-ci.org/kengonakajima/lumino"><img src="https://secure.travis-ci.org/kengonakajima/lumino.png"></a>
+
+
 Lua utility routines for minimalist MMOG devs
 
  - Target at Lua51, Luvit, and Moai SDK
