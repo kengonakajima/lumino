@@ -283,7 +283,6 @@ assert( c:put() )
 assert( c:get() )
 assert( c:get() == false )
 
-
 -- moai test
 if MOAISim then
   print("moai net")
@@ -295,6 +294,7 @@ if MOAISim then
     
   end)
 end
+
 
 
 print( "test done\n")
