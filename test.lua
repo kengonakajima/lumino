@@ -190,6 +190,7 @@ for i=1,100 do
   local x,y = randomize2D(5,5,2)
   assert( len(x,y,5,5) <= 2*1.415 )
 end
+assert( randomize2D == randomize )
 x,y = expandVec( 1,1,2,2,1 )
 assert( neareq(x,1.707106781) )
 assert( neareq(y,1.707106781) )

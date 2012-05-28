@@ -421,6 +421,7 @@ end
 
 -- 2D/3D funcs
 function _G.randomize2D(x,y,r) return x + ( -r  + math.random() * (r*2) ), y + ( -r  + math.random() * (r*2) ) end
+_G.randomize = _G.randomize2D
 function _G.expandVec(fromx,fromy,tox,toy,tolen)
   local dx,dy = (tox-fromx),(toy-fromy)
   local nx,ny = normalize(dx,dy,tolen)
@@ -704,9 +705,10 @@ function moai.loadTileDeck2( path, w, h, sz, fullxsz, fullysz, fil, wrp )
  end
 
 function moai.loadTex( path )
-  local t = MOAITexture.new()
-  t:load( path )
-  return t
+   local q = MOAIGfxQuad2D.new()
+   q:setTexture( path )
+   q:setRect( -0.5, -0.5, 0.5, 0.5 )
+   return q
 end
 
 function moai.loadGfxQuad( path )
