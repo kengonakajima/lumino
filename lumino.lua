@@ -761,8 +761,12 @@ function moai_luvit_net_createConnection(port,ip,cb)
   conn.sock:settimeout(0)
   conn.sock:connect(ip,port)
   conn.state = "connecting"
+  
   conn.sendDelay = {min=0,max=0}  -- 0.1 to simulate 100ms network send delay
-  conn.sendDelayQ = {} 
+  conn.sendDelayQ = {}
+  conn.recvDelay = {min=0,max=0}
+  conn.recvDelayQ = {}
+  
   conn.callbacks = {}
   function conn:on(ev,cb)
     self.callbacks[ev] = cb
@@ -779,7 +783,6 @@ function moai_luvit_net_createConnection(port,ip,cb)
       insert( self.sendDelayQ, data)
       local delay = range( self.sendDelay.min, self.sendDelay.max )
       self.nextSendAt = now() + delay
-      print("INS", self.nextSendAt )      
       return #data
     else
       return self.sock:send(data)
@@ -797,13 +800,25 @@ function moai_luvit_net_createConnection(port,ip,cb)
         while true do
           self.sock:send( self.sendDelayQ[1])
           remove( self.sendDelayQ, 1)
-          print("SS:", self.nextSendAt, #self.sendDelayQ )
           if #self.sendDelayQ == 0 then
             break
           end
         end
       end      
     end
+    if self.recvDelay.max > 0 then
+      if #self.recvDelayQ > 0 and now() > self.nextRecvAt then
+        if self.callbacks["data"] then
+          while true do
+            self.callbacks["data"]( self.recvDelayQ[1])
+            remove( self.recvDelayQ, 1 )
+            if #self.recvDelayQ == 0 then
+              break
+            end
+          end          
+        end
+      end      
+    end    
     
     if self.closed then error("socket closed") end    
     if not self.counter then self.counter = 1 end
@@ -836,9 +851,15 @@ function moai_luvit_net_createConnection(port,ip,cb)
           if partial then got = partial end
           if res then got = res end
           if got then
-            if self.callbacks["data"] then
-              self.callbacks["data"](got)
-            end
+            if self.recvDelay.max > 0 then
+              insert( self.recvDelayQ, got )
+              local delay = range( self.recvDelay.min, self.recvDelay.max )
+              self.nextRecvAt = now() + delay
+            else
+              if self.callbacks["data"] then
+                self.callbacks["data"](got)
+              end
+            end            
           end
         end               
       end
