@@ -86,6 +86,8 @@ function _G.max(a,b)
 end
 
 -- table funcs
+_G.insert = table.insert
+_G.remove = table.remove
 function _G.merge(to,from)  -- overwrite merge
   for k,v in pairs(from) do
     to[k]=v
@@ -759,7 +761,8 @@ function moai_luvit_net_createConnection(port,ip,cb)
   conn.sock:settimeout(0)
   conn.sock:connect(ip,port)
   conn.state = "connecting"
-  conn.sendDelay = nil  -- 0.1 to simulate 100ms network send delay
+  conn.sendDelay = {min=0,max=0}  -- 0.1 to simulate 100ms network send delay
+  conn.sendDelayQ = {} 
   conn.callbacks = {}
   function conn:on(ev,cb)
     self.callbacks[ev] = cb
@@ -772,10 +775,11 @@ function moai_luvit_net_createConnection(port,ip,cb)
       print("write: socket closed!")
       return 0
     end
-    if self.sendDelay and self.sendDelay > 0 then
-      later( self.sendDelay, function()
-          self.sock:send(data)
-        end)
+    if self.sendDelay.max > 0 then
+      insert( self.sendDelayQ, data)
+      local delay = range( self.sendDelay.min, self.sendDelay.max )
+      self.nextSendAt = now() + delay
+      print("INS", self.nextSendAt )      
       return #data
     else
       return self.sock:send(data)
@@ -788,7 +792,19 @@ function moai_luvit_net_createConnection(port,ip,cb)
   end
   
   function conn:poll()
-    if self.sendDelay then pollLater() end
+    if self.sendDelay.max > 0 then
+      if #self.sendDelayQ > 0 and now() > self.nextSendAt then
+        while true do
+          self.sock:send( self.sendDelayQ[1])
+          remove( self.sendDelayQ, 1)
+          print("SS:", self.nextSendAt, #self.sendDelayQ )
+          if #self.sendDelayQ == 0 then
+            break
+          end
+        end
+      end      
+    end
+    
     if self.closed then error("socket closed") end    
     if not self.counter then self.counter = 1 end
 
