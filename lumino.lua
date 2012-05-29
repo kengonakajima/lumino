@@ -759,7 +759,7 @@ function moai_luvit_net_createConnection(port,ip,cb)
   conn.sock:settimeout(0)
   conn.sock:connect(ip,port)
   conn.state = "connecting"
-  
+  conn.sendDelay = nil  -- 0.1 to simulate 100ms network send delay
   conn.callbacks = {}
   function conn:on(ev,cb)
     self.callbacks[ev] = cb
@@ -772,7 +772,14 @@ function moai_luvit_net_createConnection(port,ip,cb)
       print("write: socket closed!")
       return 0
     end
-    return self.sock:send(data)
+    if self.sendDelay then
+      later( self.sendDelay, function()
+          self.sock:send(data)
+        end)
+      return #data
+    else
+      return self.sock:send(data)
+    end    
   end
 
   function conn:close()
@@ -781,6 +788,7 @@ function moai_luvit_net_createConnection(port,ip,cb)
   end
   
   function conn:poll()
+    if self.sendDelay then pollLater() end
     if self.closed then error("socket closed") end    
     if not self.counter then self.counter = 1 end
 
