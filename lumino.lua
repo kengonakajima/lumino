@@ -772,7 +772,7 @@ function moai_luvit_net_createConnection(port,ip,cb)
       print("write: socket closed!")
       return 0
     end
-    if self.sendDelay then
+    if self.sendDelay and self.sendDelay > 0 then
       later( self.sendDelay, function()
           self.sock:send(data)
         end)
