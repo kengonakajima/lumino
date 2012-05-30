@@ -46,10 +46,19 @@ assert( max(-1,5) == 5 )
 assert( max(5,-1) == 5 )
 assert( max(-1,nil) == -1 )
 assert( max(nil,-1) == -1 )
+
 t1 = {a=1,b=2,c=3}
+assert(keynum(t1)==3)
+ks = keys(t1)
+assert( sort(ks) )
+assert( ks[1]=="a")
+assert( ks[2]=="b")
+assert( ks[3]=="c")
 t2 = {d=4,e=5,f=6}
 out = merge(t1,t2)
 assert(out.d==4 and out.a==1 and out.e==5 and out.f==6 )
+
+
 t1 = {10,15,6,8}
 s = sort(t1, function(a,b) return a<b end )
 assert( s[1] == 6 and s[2] == 8 and s[3] ==10 and s[4] == 15 )
@@ -121,15 +130,18 @@ assert(sprintf("%02x", 1 ) == "01" )
 
 for i=1,20 do prt(".") end
 prt("\n")
+datePrint("datePrint")
+
 t = {a=1,b=2,c=3}
-table.insert(t,1)
-table.insert(t,2)
+insert(t,1)
+insert(t,2)
 dump(t)
 print( num2digitString(50))
 print( num2digitString(150))
 
 path = "./_test.log"
-writeFile(path,"")
+r=writeFile(path,"")
+assert(r)
 
 for i=1,100 do
   appendLog( path, "hoge" .. i )
@@ -172,10 +184,16 @@ end
 s = readFile(path)
 ary = s:split("\n")
 assert( #ary == 100+1) -- last line is empty
-writeFile(path, "hello\n")
+r=writeFile(path, "hello\n")
+assert(r)
 assert(existFile(path))
 s=readFile(path)
 assert(s=="hello\n")
+-- file access error test
+s=readFile("/t/file_no_exist")
+assert(s==nil)
+s=writeFile("/t/file_no_exist","hoge")
+assert(s==nil)
 
 t={a=1,b=2,c=3}
 saveTableToCSV(path,t)

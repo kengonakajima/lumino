@@ -141,6 +141,20 @@ function _G.count(t,f)
   end
   return cnt
 end
+function _G.keys(t)
+  local out = {}
+  for k,v in pairs(t) do
+    table.insert(out,k)
+  end
+  return out
+end
+function _G.keynum(t)
+  local cnt=0
+  for k,v in pairs(t) do
+    cnt = cnt + 1
+  end
+  return cnt
+end
 function _G.sumValues(t)
   local tot=0
   for k,v in pairs(t) do
@@ -256,10 +270,19 @@ function _G.printTrace(erro)
   print( debug.traceback(100) )
 end
 function _G.sprintf(...) return string.format(...) end
-function _G.printf(...) return io.stdout:write( sprintf(...) ) end 
+function _G.printf(...)
+  io.stdout:write( sprintf(...) )
+  io.stdout:flush()  
+end 
 function _G.prt(...)
   local s = table.concat({...}," ")
   io.stdout:write(s)
+  io.stdout:flush()
+end
+function _G.datePrint(...)
+  local s = table.concat({...}," ")
+  io.stdout:write( "" .. os.date() .. s .. "\n" )
+  io.stdout:flush()  
 end
 function _G.dump(t)
   for i=1,#t do
@@ -347,15 +370,23 @@ end
 
 -- file funcs
 function _G.readFile(path)
-  local fp = io.open(path)
-  local s = fp:read(1024*1024*1024)
-  fp:close()
+  local ok, data = pcall( function()
+      local fp = io.open(path)
+      local s = fp:read(1024*1024*1024)
+      fp:close()
+      return s
+    end)
+  if ok then return data else return nil end
   return s
 end
 function _G.writeFile(path,data)
-  local fp = io.open(path,"w")
-  fp:write(data)
-  fp:close()
+  local ok, ret = pcall( function()
+      local fp = io.open(path,"w")
+      local ret = fp:write(data)
+      fp:close()
+      return ret
+    end)
+  if ok then return ret else return nil end
 end
 function _G.existFile(fn)
   local f = io.open(fn)
