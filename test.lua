@@ -287,6 +287,15 @@ if uv then
   assert(r.b[1]==1 and r.b[4]=="hoge" and r.c=="ddd" )
   r = readJSON( "file_not_exist" )
   assert( r==nil)
+  
+  assert(writeJSON( "./_test_j1.json", {a=1,b=2}))
+  assert(writeJSON( "./_test_j2.json", {c=3,d=4}))
+  r = mergeJSONs( "./_test_j1.json", "./_test_j2.json" )
+  assert(r)
+  assert(r.a==1 and r.b==2 and r.c==3 and r.d==4)
+  r = mergeJSONs( "not_found_1", "not_found_2", "not_found_3" )
+  assert(r==nil)
+  
 end
 
 if MOAISim then

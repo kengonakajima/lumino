@@ -411,6 +411,20 @@ end
 function _G.writeJSON(path,t)
   return writeFile(path, JSON.stringify(t))
 end
+function _G.mergeJSONs(...)
+  local paths={...}
+  local out={}
+  local foundAny=false
+  for i,path in ipairs(paths) do
+    local t = readJSON(path)
+    if t then
+      merge(out,t)
+      foundAny = true
+    end    
+  end
+  if not foundAny then return nil else return out end
+end
+
 
 -- csv funcs
 function _G.loadTableFromCSV(fn)
@@ -707,6 +721,7 @@ if ffi then
   function _G.savePidFile(path)
     writeFile(path, ""..getpid().."\n")
   end
+  _G.exit = process.exit
 end
 
 -- MOAI funcs
