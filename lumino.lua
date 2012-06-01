@@ -18,11 +18,12 @@ else
   _G.string = require("string")
   _G.os = require("os")
   local res,mod = pcall( function() return require("uv_native") end)
-  if res then _G.uv = mod end -- luvit only
-  res, mod = pcall( function() return require("ffi") end) 
-  if res then _G.ffi = mod end -- luajit only
-  res, mod = pcall( function() return require("net") end)
-  if res then _G.net = mod end  
+  if res then _G.uv = mod end 
+  if _G.uv then -- luvit only
+    _G.ffi = require("ffi")
+    _G.net = require("net")
+    _G.JSON = require("json")
+  end
 end
 
 -- math and lua values
@@ -398,6 +399,18 @@ function _G.existFile(fn)
   end
 end
 
+-- json funcs
+function _G.readJSON(path)
+  local s = readFile(path)
+  if s then
+    return JSON.parse(s)
+  else
+    return nil
+  end
+end
+function _G.writeJSON(path,t)
+  return writeFile(path, JSON.stringify(t))
+end
 
 -- csv funcs
 function _G.loadTableFromCSV(fn)

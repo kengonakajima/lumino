@@ -271,13 +271,22 @@ assert( not isUsableInName( "ringo:RINGO/01-83" ) )
 assert( generateNewId() == 1)
 assert( generateNewId() == 2)
 
--- UNIX funcs
-if ffi and net then
+-- UNIX funcs (luvit only test)
+if uv then
   pid1 = getpid()
   pid2 = getpid()
   assert( pid1 == pid2 )
   savePidFile(path)
   ignoreSIGPIPE()
+  local t = { a=1,b={ 1,2,3,"hoge" },c="ddd"}
+  local path = "./_test.json"
+  assert(writeJSON( path, t ))
+  local r = readJSON(path)
+  assert(r)
+  assert(r.a==1)
+  assert(r.b[1]==1 and r.b[4]=="hoge" and r.c=="ddd" )
+  r = readJSON( "file_not_exist" )
+  assert( r==nil)
 end
 
 if MOAISim then
