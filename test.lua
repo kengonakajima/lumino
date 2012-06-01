@@ -293,6 +293,11 @@ if uv then
   r = mergeJSONs( "./_test_j1.json", "./_test_j2.json" )
   assert(r)
   assert(r.a==1 and r.b==2 and r.c==3 and r.d==4)
+  assert(writeJSON( "./_test_j3.json",{a=3,b=8}) )
+  r = mergeJSONs( "./_test_j1.json", "./_test_j3.json" )
+  assert(r)
+  assert(r.a==3 and r.b==8)
+    
   r = mergeJSONs( "not_found_1", "not_found_2", "not_found_3" )
   assert(r==nil)
   
