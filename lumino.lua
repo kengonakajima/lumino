@@ -696,6 +696,8 @@ if ffi then
   ffi.cdef[[
       int getpid();
       int sigignore(int sig);
+      int kill(int pid, int sig);
+      void (*signal(int sig, void (*func)(int)))(int);
 
       struct timeval {
         long  tv_sec;   
@@ -721,6 +723,15 @@ if ffi then
   function _G.savePidFile(path)
     writeFile(path, ""..getpid().."\n")
   end
+  _G.SIGINT = 2
+  _G.SIGTERM = 15
+  function _G.kill(pid,sig)
+    return ffi.C.kill(pid,sig)
+  end
+  function _G.signal(sig,fn)
+    ffi.C.signal(sig,fn)
+  end
+    
   _G.exit = process.exit
 end
 

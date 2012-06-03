@@ -300,7 +300,9 @@ if uv then
     
   r = mergeJSONs( "not_found_1", "not_found_2", "not_found_3" )
   assert(r==nil)
-  
+
+  signal(SIGINT,function() print "got signal" end)
+  kill(getpid(), SIGINT)
 end
 
 if MOAISim then
