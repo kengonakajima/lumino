@@ -698,6 +698,7 @@ if ffi then
       int sigignore(int sig);
       int kill(int pid, int sig);
       void (*signal(int sig, void (*func)(int)))(int);
+      int unlink(const char *path);
 
       struct timeval {
         long  tv_sec;   
@@ -731,7 +732,13 @@ if ffi then
   function _G.signal(sig,fn)
     ffi.C.signal(sig,fn)
   end
-    
+  function _G.unlink(path)
+    if ffi.C.unlink(path) < 0 then
+      return false
+    else
+      return true
+    end    
+  end  
   _G.exit = process.exit
 end
 

@@ -303,6 +303,9 @@ if uv then
 
   signal(SIGINT,function() print "got signal" end)
   kill(getpid(), SIGINT)
+
+  assert(writeFile("_test_unlink","hoge"))
+  assert(unlink("_test_unlink"))
 end
 
 if MOAISim then
