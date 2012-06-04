@@ -29,6 +29,7 @@ else
     _G.JSON = require("json")
     _G.http = require("http")
     _G.timer = require("timer")
+    _G.fs = require("fs")
 --    _G.utils = require("utils")
   end
 end
@@ -697,6 +698,18 @@ function _G.generateNewId()
   globalCounterGen = globalCounterGen + 1
   return globalCounterGen
 end
+
+-- luvit funcs
+function _G.mkdir(path,mode)
+  if fs then
+    local res, ret = pcall(function() return fs.mkdir(path,mode) end)
+    if res then return ret end
+  else
+    error( "fs.mkdir is not implemented in this env")
+  end
+end
+
+
 
 -- UNIX funcs
 if ffi then 
