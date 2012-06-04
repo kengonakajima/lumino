@@ -21,9 +21,9 @@ else
   _G.io = require("io")
   _G.string = require("string")
   _G.os = require("os")
-  local res,mod = pcall( function() return require("uv_native") end)
-  if res then _G.uv = mod end 
-  if _G.uv then -- luvit only
+  local res,uv = pcall( function() return require("uv_native") end)
+  if res and uv then -- luvit only
+    _G.uv = uv
     _G.ffi = require("ffi")
     _G.net = require("net")
     _G.JSON = require("json")
