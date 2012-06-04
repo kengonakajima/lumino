@@ -699,15 +699,6 @@ function _G.generateNewId()
   return globalCounterGen
 end
 
--- luvit funcs
-function _G.mkdir(path,mode)
-  if fs then
-    local res, ret = pcall(function() return fs.mkdir(path,mode) end)
-    if res then return ret end
-  else
-    error( "fs.mkdir is not implemented in this env")
-  end
-end
 
 
 
@@ -725,12 +716,23 @@ if ffi then
         long  tv_usec;  
       };    
       int gettimeofday(struct timeval *restrict tp, void *restrict tzp);
+      int mkdir( const char *path, int mode );
   ]]
   function _G.now()
     local tmv = ffi.new( "struct timeval")
     ffi.C.gettimeofday( tmv, nil )
     return tonumber(tmv.tv_sec) + tonumber(tmv.tv_usec) / 1000000
   end
+
+  function _G.mkdir(path,mode)
+    local ret = ffi.C.mkdir(path,mode)
+    if ret<0 then
+      return false
+    else
+      return true
+    end
+  end
+
 
   function _G.getpid()
     return ffi.C.getpid()
@@ -798,9 +800,7 @@ if ffi then
         unlink( path)
         exit(1)
       end)
-    if savePidFile(path) then
-      print( "saved pidfile:", path, "pid:",getpid() )
-    else
+    if not savePidFile(path) then
       error( "cannot save pidfile:"..path )
     end
     
