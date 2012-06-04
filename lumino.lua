@@ -14,7 +14,7 @@ pcall( function()
   end)
 
 if MOAISim then
-  
+
 else
   _G.table = require("table")
   _G.math = require("math")
@@ -92,6 +92,11 @@ function _G.max(a,b)
   if not a then return b end
   if not b then return a end   
   if a > b then return a else return b end
+end
+
+-- loop funcs
+function _G.times(n,f)
+  for i=1,n do f(i) end
 end
 
 -- table funcs
@@ -1089,6 +1094,45 @@ function _G.Counter(max)
     end    
   end
   return t
+end
+
+function _G.strict()
+  local debug = require("debug")
+  local getinfo, error, rawset, rawget = debug.getinfo, error, rawset, rawget
+
+  local mt = getmetatable(_G)
+  assert(mt==nil)
+  if mt == nil then
+    mt = {}
+    setmetatable(_G, mt)
+  end
+
+  mt.__declared = {}
+
+  local function what ()
+    local d = getinfo(3, "S")
+    return d and d.what or "C"
+  end
+  mt.__newindex = function (t, n, v)
+    if not mt.__declared[n] then
+      local w = what()
+      if w ~= "main" and w ~= "C" then
+        error("assign to undeclared variable '"..n.."'", 2)
+      end
+      mt.__declared[n] = true
+    end
+    rawset(t, n, v)
+  end
+
+  mt.__index = function (t, n)
+    if not mt.__declared[n] and what() ~= "C" then
+      error("variable '"..n.."' is not declared", 2)
+    end
+    return rawget(t, n)
+  end
+end
+function _G.nostrict()
+  setmetatable(_G,nil)
 end
 
 

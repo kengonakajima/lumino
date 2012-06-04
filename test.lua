@@ -262,6 +262,17 @@ assert( reverseDir(DIR.RIGHT)==DIR.LEFT)
 area = calcArea( {0,0,  0,2,  2,2,  2,0 } )
 assert(area ==4)
 
+-- loop
+a=1
+times(100,function()a=a+1 end)
+assert(a==101)
+
+-- strict
+strict()
+e=false
+xpcall( function() hoge = not_declared + 1 end, function() e=true end)
+assert(e)
+nostrict()
 
 -- TODO: sendmail( from, to, subj, msg )
 
