@@ -786,7 +786,7 @@ if ffi then
         exit(1)
       end)
     if savePidFile(path) then
-      print( "saved pidfile:", path )
+      print( "saved pidfile:", path, "pid:",getpid() )
     else
       error( "cannot save pidfile:"..path )
     end
@@ -794,20 +794,19 @@ if ffi then
     return true
   end
 
-  function _G.startAdminHTTPServer(port,statusFunc)
+  function _G.startAdminHTTPServer(port,statfunc)
     datePrint("createAdminHTTPServer: start admin http at port:", port )
     http.createServer( function(req,res)   
         local body = ""
         if req.url == "/shutdown" then
-          toExit = true
-          body = "ok"
-          datePrint("shutdown command" )
+          datePrint("createAdminHTTPServer: shutdown command. killing self" )
+          kill(getpid(),SIGTERM)
         elseif req.url == "/crash" then
           datePrint("crash command called!")
           function_not_defined()
         elseif req.url == "/status" then
-          if statusFunc then
-            body = statusFunc()
+          if statfunc then
+            body = statfunc()
           else
             body = "ok"
           end          
