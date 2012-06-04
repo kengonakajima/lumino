@@ -27,6 +27,9 @@ else
     _G.ffi = require("ffi")
     _G.net = require("net")
     _G.JSON = require("json")
+    _G.http = require("http")
+    _G.timer = require("timer")
+--    _G.utils = require("utils")
   end
 end
 
@@ -286,7 +289,7 @@ function _G.prt(...)
 end
 function _G.datePrint(...)
   local s = table.concat({...}," ")
-  io.stdout:write( "" .. os.date() .. s .. "\n" )
+  io.stdout:write( "[" .. os.date() .. "] " .. s .. "\n" )
   io.stdout:flush()  
 end
 function _G.dump(t)
@@ -770,9 +773,9 @@ if ffi then
     lumino.signalSet[sig]=false
   end
 
-  function _G.usePidFile(path)
+  function _G.createCleanPidFile(path)
     if not path then
-      print( "usePidFile: pid file path is not set")
+      print( "createCleanPidFile: pid file path is not set")
       return false
     end
 
@@ -790,9 +793,35 @@ if ffi then
     
     return true
   end
-  
 
-  
+  function _G.startAdminHTTPServer(port,statusFunc)
+    datePrint("createAdminHTTPServer: start admin http at port:", port )
+    http.createServer( function(req,res)   
+        local body = ""
+        if req.url == "/shutdown" then
+          toExit = true
+          body = "ok"
+          datePrint("shutdown command" )
+        elseif req.url == "/crash" then
+          datePrint("crash command called!")
+          function_not_defined()
+        elseif req.url == "/status" then
+          if statusFunc then
+            body = statusFunc()
+          else
+            body = "ok"
+          end          
+        else
+          body = "url not found : " .. req.url
+        end    
+        res:writeHead(200, {
+            ["Content-Type"] = "text/plain",
+            ["Content-Length"] = #body
+          })
+        res:finish(body)
+      end):listen( port )
+  end  
+
 end
 
 -- MOAI funcs
