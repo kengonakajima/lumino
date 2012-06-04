@@ -318,6 +318,22 @@ if uv then
   
   assert(writeFile("_test_unlink","hoge"))
   assert(unlink("_test_unlink"))
+
+  local guid1 = getGUID()
+  local guid2 = getGUID()
+  assert( guid1 ~= guid2)
+  local tmp1 = makeTmpPath( "/tmp/lumino")
+  local tmp2 = makeTmpPath( "/tmp/lumino")
+  assert( tmp1 ~= tmp2 )
+  assert( writeFile(tmp1,"hoge"))
+  assert( writeFile(tmp2,"hoge"))
+
+  local res = cmd( "ls -t ./")
+  assert(res)
+  print(res)
+  local ary = split(res,"\n")
+  assert(find(ary,"test.lua"))
+  assert(find(ary,"lumino.lua"))  
 end
 
 if MOAISim then

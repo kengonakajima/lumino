@@ -128,6 +128,7 @@ function _G.find(t,f)
   end
   return nil  
 end
+
 function _G.scan(t,f)
   for i,v in ipairs(t) do
     f(v)
@@ -701,6 +702,22 @@ end
 
 
 
+function _G.getGUID()
+  if not _G.lumino.guid then
+    _G.lumino.guid = 1
+  end
+  lumino.guid = lumino.guid + 1
+  local t = int(now())
+  local pid = 0
+  if getpid then pid = getpid() end
+  return "" .. t .. "_" .. pid .. "_" .. lumino.guid
+end
+
+function _G.makeTmpPath(prefix)
+  assert(prefix)
+  return prefix .. "_" .. getGUID()
+end
+
 
 -- UNIX funcs
 if ffi then 
@@ -717,11 +734,19 @@ if ffi then
       };    
       int gettimeofday(struct timeval *restrict tp, void *restrict tzp);
       int mkdir( const char *path, int mode );
+      int system( const char *cmd );      
   ]]
   function _G.now()
     local tmv = ffi.new( "struct timeval")
     ffi.C.gettimeofday( tmv, nil )
     return tonumber(tmv.tv_sec) + tonumber(tmv.tv_usec) / 1000000
+  end
+
+  function _G.cmd(s)
+    local tmp = makeTmpPath("/tmp/lumino_cmd")
+    local s = ffi.C.system( sprintf( "%s > %s 2>/dev/null", s, tmp ) )
+    local res = readFile(tmp)
+    return res
   end
 
   function _G.mkdir(path,mode)
