@@ -726,7 +726,7 @@ if ffi then
     sigignore(13) -- works for linux and osx
   end
   function _G.savePidFile(path)
-    writeFile(path, ""..getpid().."\n")
+    return writeFile(path, ""..getpid().."\n")
   end
   _G.SIGHUP = 1
   _G.SIGINT = 2  
@@ -769,8 +769,27 @@ if ffi then
       end)
     lumino.signalSet[sig]=false
   end
-  
 
+  function _G.usePidFile(path)
+    if not path then
+      print( "usePidFile: pid file path is not set")
+      return false
+    end
+
+-- signal
+    addTrap( SIGTERM, function()
+        print( "got sigterm. unlink:", path )
+        unlink( path)
+        exit(1)
+      end)
+    if savePidFile(path) then
+      print( "saved pidfile:", path )
+    else
+      error( "cannot save pidfile:"..path )
+    end
+    
+    return true
+  end
   
 
   
