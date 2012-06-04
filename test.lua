@@ -110,7 +110,12 @@ ary = split(s," ")
 assert( ary[1] == "hello" and ary[2] == "lua" and ary[3] == "world" and ary[4] == "!" )
 ary = s:split(" ")
 assert( ary[1] == "hello" and ary[2] == "lua" and ary[3] == "world" and ary[4] == "!" )
-
+s="aho"
+dumped = s:dumpbytes()
+assert(dumped=="97 104 111")
+dumped = s:dumphex()
+assert(dumped=="61 68 6f")
+assert(trim("aho\naho\n\n")=="aho\naho")
 
 assert( nearer( 1,2,3) == 2 )
 assert( nearer( 2,2,3) == 2 )

@@ -139,6 +139,8 @@ function _G.scan(t,f)
     f(v)
   end  
 end
+_G.each = _G.scan
+
 function _G.filter(t,f)
  local out={}
   for i,v in ipairs(t) do
@@ -263,7 +265,26 @@ function _G.split(str, delim)
 end
 _G.string.split = split
 
-
+function _G.dumpbytes(str)
+  local out={}
+  for i=1,#str do
+    insert(out, str:byte(i,i))
+  end
+  return table.concat(out," ")
+end
+_G.string.dumpbytes = dumpbytes
+function _G.dumphex(str)
+  local out={}
+  for i=1,#str do
+    insert(out, string.format("%02x",str:byte(i,i)))
+  end
+  return table.concat(out," ")  
+end
+_G.string.dumphex = dumphex
+function _G.trim(s)
+  return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+_G.string.trim = trim
 
 -- return value nearer to __from__
 function _G.nearer(from,a,b)
@@ -837,6 +858,11 @@ if ffi then
     return true
   end
 
+
+end
+
+-- luvit only
+if uv then 
   function _G.startAdminHTTPServer(port,statfunc)
     datePrint("createAdminHTTPServer: start admin http at port:", port )
     http.createServer( function(req,res)   
@@ -862,10 +888,38 @@ if ffi then
           })
         res:finish(body)
       end):listen( port )
-  end  
+  end
 
+  -- ex:  ( "./libs", "msgpack")
+  function _G.scanLuvitModule(scantop,name)
+    local cwd = cmd( "pwd" ):trim()
+    print("cwd:",cwd)
+    local s = sprintf( "find '%s/%s' -name '%s.luvit'", cwd, scantop, name )
+    p(s)
+    local fo = cmd(s)
+    local ary = split(fo,"\n")
+    local outmod
+    for i,path in ipairs(ary) do
+      path = string.gsub(path, ".luvit$","")
+      if #path > 0 then 
+        xpcall( function()
+            outmod = require(path)
+            datePrint("scanLuvitModule: module found in :",path)
+          end,
+          function(e)
+            print(e)
+          end)
+        if outmod then
+          return outmod
+        end
+      end      
+    end
+    return nil
+  end
+  
 end
 
+  
 -- MOAI funcs
 function moai.now() return MOAISim.getDeviceTime() end
 function moai.propDistance(p0,p1)
