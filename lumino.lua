@@ -5,6 +5,10 @@
 -- envs
 local luvit, moai = {}, {}
 
+if not _G.lumino then
+  _G.lumino = {}
+end
+
 pcall( function()
     _G.socket = require("socket")
   end)
@@ -724,14 +728,14 @@ if ffi then
   function _G.savePidFile(path)
     writeFile(path, ""..getpid().."\n")
   end
-  _G.SIGINT = 2
+  _G.SIGHUP = 1
+  _G.SIGINT = 2  
+  _G.SIGALRM = 14
   _G.SIGTERM = 15
   function _G.kill(pid,sig)
     return ffi.C.kill(pid,sig)
   end
-  function _G.signal(sig,fn)
-    ffi.C.signal(sig,fn)
-  end
+
   function _G.unlink(path)
     if ffi.C.unlink(path) < 0 then
       return false
@@ -740,6 +744,36 @@ if ffi then
     end    
   end  
   _G.exit = process.exit
+  if not lumino.signalSet then lumino.signalSet = {} end
+  function _G.signal(sig,fn)
+    ffi.C.signal(sig,fn)
+    lumino.signalSet[sig] = true
+  end
+  
+  -- signal handle tables
+  -- sigtbl : { [2] => { fn1, fn2, .. }, [13] => { fn3, fn4, .. } }
+  if not lumino.sigtbl then
+    lumino.sigtbl = {} 
+    for i=0,16 do lumino.sigtbl[i] = {} end
+  end  
+
+  function _G.addTrap(sig,fn)
+    if lumino.signalSet[sig] then
+      error( "don't use with signal()! sig:"..sig)
+    end    
+    insert( lumino.sigtbl[sig], fn )
+    signal( sig, function()
+        for i,f in ipairs( lumino.sigtbl[sig] ) do
+          f()
+        end
+      end)
+    lumino.signalSet[sig]=false
+  end
+  
+
+  
+
+  
 end
 
 -- MOAI funcs

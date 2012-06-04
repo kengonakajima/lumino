@@ -304,6 +304,18 @@ if uv then
   signal(SIGINT,function() print "got signal" end)
   kill(getpid(), SIGINT)
 
+  alrmcnt=0
+  addTrap(SIGALRM, function()
+      print "alrm1"
+      alrmcnt = alrmcnt + 1
+    end)
+  addTrap(SIGALRM, function()
+      print "alrm2"
+      alrmcnt = alrmcnt + 1
+    end)
+  kill(getpid(), SIGALRM)
+  assert( alrmcnt == 2 )
+  
   assert(writeFile("_test_unlink","hoge"))
   assert(unlink("_test_unlink"))
 end
