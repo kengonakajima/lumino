@@ -913,15 +913,23 @@ function _G.httpSendFile(res,path)
 end
 
 function _G.httpSendRaw(res,code,ct,data)
-  local out = {
-    ["Content-Type"] = ct
-  }
-  if data then 
-    out["Content-Length"] = #data
+
+  if data then
+    res:writeHead( code, {
+        ["Content-Type"] = ct,
+        ["Content-Length"] = #data        
+      })
+    res:finish(data)
+  else
+    data = "not found"
+    res:writeHead( code, {
+        ["Content-Type"] = "text/html",
+        ["Content-Length"] = #data
+      })
+    res:finish(data)    
   end
   
-  res:writeHead( code, out)
-  res:finish(data)
+
   return true
 end
 
@@ -931,15 +939,27 @@ function _G.httpRespond(req,res,funcs)
   local pathary = split(req.url, "/")
   remove(pathary,1) -- left token of the first /
   local fname = pathary[1]
-  print("FFFFFF:",fname)
   remove(pathary,1)
+  for i,v in ipairs(pathary) do
+    local n = tonumber(v)
+    if n then
+      pathary[i] = n
+    end
+  end
+  
   req.paths = pathary
 
   function res:sendFile(path)
     return httpSendFile(self,path)
   end
   function res:sendJSON(t)
-    return httpSendRaw(res,200,"application/json",JSON.stringify(t))
+    return httpSendRaw(self,200,"application/json",JSON.stringify(t))
+  end
+  function res:sendJPEG(data) httpSendRaw(self,200,"image/jpeg",data) end
+  function res:sendPNG(data) httpSendRaw(self,200,"image/png",data) end
+  function res:sendHTML(data) httpSendRaw(self,200,"text/html",data) end
+  function res:sendError(code,body)
+    return httpSendRaw(self,code,"text/html","<html><body>error code:" .. code .. "</body></html>")
   end
   
   local f = funcs[fname]
@@ -1014,7 +1034,7 @@ if uv then
             ["Content-Length"] = #body
           })
         res:finish(body)
-      end):listen( port )
+      end):listen( port, "127.0.0.1" )
   end
 
   -- ex:  ( "./libs", "msgpack")
