@@ -368,11 +368,12 @@ if uv then
 
   _G.htok = false
   http.createServer(function(req,res)
-      httpServeStaticFiles(req,res,"public_html",{"html","png"})
-      local funcs={}
-      funcs.default= function(req,res) res:sendFile("index.html") end
-      funcs.f1 = function(req,res) res:sendJSON({a=1,b=req.paths}) end
-      httpRespond(req,res,funcs)
+      if not httpServeStaticFiles(req,res,"public_html",{"html","png"}) then
+        local funcs={}
+        funcs.default= function(req,res) res:sendFile("index.html") end
+        funcs.f1 = function(req,res) res:sendJSON({a=1,b=req.paths}) end
+        httpRespond(req,res,funcs)
+      end
     end):listen(57589,"127.0.0.1",function(e)
       assert(not e)
       htok = true
