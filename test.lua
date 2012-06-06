@@ -176,16 +176,22 @@ measure( function()
   end)
 
 st=now()
-later(0.05, function()
+latecall=0
+later(0.1, function()
     print("deferred func called")
+    latecall = latecall + 1
   end)
-while true do
-  local nt = now()
-  if nt > st + 0.2 then
-    break
+if not uv then 
+  while true do
+    local nt = now()
+    if nt > st + 1.5 then -- need more than 1 sec because default Lua has no highreso time!
+      break
+    end
+    pollLater()
   end
-  pollLater()
 end
+
+
 s = readFile(path)
 ary = s:split("\n")
 assert( #ary == 100+1) -- last line is empty
@@ -288,7 +294,7 @@ assert( generateNewId() == 1)
 assert( generateNewId() == 2)
 
 -- UNIX funcs (luvit only test)
-if uv then
+if uv then  
   pid1 = getpid()
   pid2 = getpid()
   assert( pid1 == pid2 )
@@ -344,12 +350,50 @@ if uv then
   assert( writeFile(tmp1,"hoge"))
   assert( writeFile(tmp2,"hoge"))
 
+  local e = false
+  cmd( "command_not_found",function(e,res)
+      assert(e)
+    end)
+  
   local res = cmd( "ls -t ./")
   assert(res)
   print(res)
   local ary = split(res,"\n")
   assert(find(ary,"test.lua"))
-  assert(find(ary,"lumino.lua"))  
+  assert(find(ary,"lumino.lua"))
+
+  cmd("mkdir public_html") -- error ok
+  assert(existFile("public_html"))
+  assert(writeFile("public_html/index.html","hoge"))
+
+  _G.htok = false
+  http.createServer(function(req,res)
+      httpServeStaticFiles(req,res,"public_html",{"html","png"})
+      local funcs={}
+      funcs.default= function(req,res) res:sendFile("index.html") end
+      funcs.f1 = function(req,res) res:sendJSON({a=1,b=req.paths}) end
+      httpRespond(req,res,funcs)
+    end):listen(57589,"127.0.0.1",function(e)
+      assert(not e)
+      htok = true
+      every(0.1, function()
+          checkEverythingOK() 
+        end)
+
+--       later( 300, function()
+--           local s=cmd("curl http://localhost:57589/index.html")
+--           assert(s=="hoge")
+--           s=cmd("curl http://localhost:57589/f1/a/b")
+--           assert(s)
+--           local o = JSON.parse(s)
+--           assert(o.a == 1)
+--           assert(o.b)
+--           assert(o.b[1] == "a")
+--           assert(o.b[2] == "b")
+--           print("http done")
+--         end)
+    end)
+    
 end
 
 if MOAISim then
@@ -387,5 +431,32 @@ if MOAISim then
 end
 
 
+_G.normalOK = true
 
-print( "test done\n")
+function checkEverythingOK()
+  local result = 1
+  if uv then
+    if htok and normalOK and latecall > 0 then
+      result = 0
+    end
+  else
+    if normalOK and latecall > 0 then
+      result = 0
+    end
+  end
+  if result == 1 then
+    print("test failed. htok:",htok,"normalOK:",normalOK, "latecall:", latecall )
+  else
+    print("test ok")
+  end
+  exit(result)
+end
+
+if every then 
+  every(0.1,function()
+      checkEverythingOK()
+    end)
+else
+  checkEverythingOK()
+end
+

@@ -21,6 +21,7 @@ else
   _G.io = require("io")
   _G.string = require("string")
   _G.os = require("os")
+  _G.dbg = require("debug")
   local res,uv = pcall( function() return require("uv_native") end)
   if res and uv then -- luvit only
     _G.uv = uv
@@ -388,19 +389,26 @@ function _G.measure( f )
   return (et-st)
 end
 
-_G.laterCalls={}
-function _G.later(latency,f)
-  table.insert( laterCalls, { callAt = now() + latency, func = f } )
-end
+if not uv then 
+  _G.laterCalls={}
+  function _G.later(latency,f)
+    table.insert( laterCalls, { callAt = now() + latency, func = f } )
+  end
 
-function _G.pollLater()
-  local nt = now()
-  for i,v in ipairs(laterCalls) do
-    if v.callAt < nt then
-      v.func()
-      table.remove(laterCalls,i)
-    end    
+  function _G.pollLater()
+    local nt = now()
+    for i,v in ipairs(laterCalls) do
+      if v.callAt < nt then
+        v.func()
+        table.remove(laterCalls,i)
+      end    
+    end  
+  end
+else
+  function _G.later(t,f)
+    timer.setTimeout(t*1000,f)
   end  
+
 end
 
 
@@ -768,10 +776,11 @@ if ffi then
     return tonumber(tmv.tv_sec) + tonumber(tmv.tv_usec) / 1000000
   end
 
-  function _G.cmd(s)
+  function _G.cmd(s,cb)
     local tmp = makeTmpPath("/tmp/lumino_cmd")
     local s = ffi.C.system( sprintf( "%s > %s 2>/dev/null", s, tmp ) )
     local res = readFile(tmp)
+    if cb then cb(s,res) end
     return res
   end
 
@@ -861,8 +870,126 @@ if ffi then
 
 end
 
+_G.extToMimeType = {
+  txt = "text/plain",
+  md = "text/plain",
+  js = "text/javascript",
+  json = "application/json",
+  css = "text/css",
+  png = "image/png",
+  jpg = "image/jpeg",
+  jpeg = "image/jpeg",
+  gif = "image/gif",
+  bmp = "image/bmp",  
+  html = "text/html",
+  htm = "text/html",
+  pdf = "application/pdf",
+  wav = "audio/wav",
+  mp3 = "audio/mp3"
+}
+function _G.httpSendFile(res,path)
+  local mt
+  for ext,t in pairs(extToMimeType) do
+    local suf = "."..ext
+    local at = #path-#suf+1
+    if path:find( suf,at,true) then
+      mt=t
+      break
+    end    
+  end
+  if not mt then
+    mt = "text/plain"
+  end
+
+  local code 
+  local data = readFile(path)
+  if data then
+    code = 200
+  else
+    code = 404
+    data = "not found"
+  end
+  return httpSendRaw(res,code,mt,data)
+end
+
+function _G.httpSendRaw(res,code,ct,data)
+  local out = {
+    ["Content-Type"] = ct
+  }
+  if data then 
+    out["Content-Length"] = #data
+  end
+  
+  res:writeHead( code, out)
+  res:finish(data)
+  return true
+end
+
+-- funcs: table with keys of function names
+-- /FUNCNMAE/ARG1/ARG2/..?a=VAL&b=VAL
+function _G.httpRespond(req,res,funcs)
+  local pathary = split(req.url, "/")
+  remove(pathary,1) -- left token of the first /
+  local fname = pathary[1]
+  print("FFFFFF:",fname)
+  remove(pathary,1)
+  req.paths = pathary
+
+  function res:sendFile(path)
+    return httpSendFile(self,path)
+  end
+  function res:sendJSON(t)
+    return httpSendRaw(res,200,"application/json",JSON.stringify(t))
+  end
+  
+  local f = funcs[fname]
+  if f then
+    f(req,res)
+    return true
+  end
+  print("func not found:", fname )
+  if funcs.default then
+    funcs.default(req,res)
+    return true
+  end
+  return false
+end
+
+function _G.httpServeStaticFiles(req,res,docroot,exts)
+  assert(type(docroot)=="string" and #docroot>0)
+  if req.url:find("?") then
+    p("file with arg: not supported")
+    return false
+  end
+  local extfound = false
+  for i,ext in ipairs(exts) do
+    local suf = "." .. ext
+    local at = 1 + ( #req.url - #suf)
+--    print( i,ext, #req.url, #suf, at )
+    if req.url:find( suf,at,true ) then
+      extfound = true
+      local fullpath = docroot .. req.url
+      return httpSendFile(res,fullpath)
+    end
+  end
+  if extfound then 
+    httpSendRaw(res, 404, "text/plain", "not found")
+  end
+end
+
+if uv then
+  _G.exit = process.exit
+else
+  _G.exit = os.exit
+end
+
+
+  
 -- luvit only
-if uv then 
+if uv then
+  function _G.every(t,f)
+    timer.setInterval(t*1000,f)
+  end
   function _G.startAdminHTTPServer(port,statfunc)
     datePrint("createAdminHTTPServer: start admin http at port:", port )
     http.createServer( function(req,res)   
@@ -893,9 +1020,7 @@ if uv then
   -- ex:  ( "./libs", "msgpack")
   function _G.scanLuvitModule(scantop,name)
     local cwd = cmd( "pwd" ):trim()
-    print("cwd:",cwd)
     local s = sprintf( "find '%s/%s' -name '%s.luvit'", cwd, scantop, name )
-    p(s)
     local fo = cmd(s)
     local ary = split(fo,"\n")
     local outmod
@@ -1188,6 +1313,8 @@ end
 function _G.nostrict()
   setmetatable(_G,nil)
 end
+
+
 
 
 
