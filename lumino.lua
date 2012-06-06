@@ -959,7 +959,7 @@ function _G.httpRespond(req,res,funcs)
   function res:sendPNG(data) httpSendRaw(self,200,"image/png",data) end
   function res:sendHTML(data) httpSendRaw(self,200,"text/html",data) end
   function res:sendError(code,body)
-    return httpSendRaw(self,code,"text/html","<html><body>error code:" .. code .. "</body></html>")
+    return httpSendRaw(self,code,"text/html","<html><body>error code:" .. code .. "</body></html>\n")
   end
   
   local f = funcs[fname]
@@ -1012,28 +1012,28 @@ if uv then
   end
   function _G.startAdminHTTPServer(port,statfunc)
     datePrint("createAdminHTTPServer: start admin http at port:", port )
-    http.createServer( function(req,res)   
-        local body = ""
-        if req.url == "/shutdown" then
+    http.createServer( function(req,res)
+        local recvs = {}
+        recvs.shutdown = function(req,res)
           datePrint("createAdminHTTPServer: shutdown command. killing self" )
           kill(getpid(),SIGTERM)
-        elseif req.url == "/crash" then
+        end
+        recvs.crash = function(req,res)
           datePrint("crash command called!")
           function_not_defined()
-        elseif req.url == "/status" then
+        end
+        recvs.status = function(req,res)
           if statfunc then
             body = statfunc()
           else
             body = "ok"
-          end          
-        else
-          body = "url not found : " .. req.url
-        end    
-        res:writeHead(200, {
-            ["Content-Type"] = "text/plain",
-            ["Content-Length"] = #body
-          })
-        res:finish(body)
+          end
+          res:sendHTML(body)
+        end
+        recvs.default = function(req,res)
+          res:sendError(404)
+        end
+        httpRespond(req,res,recvs)
       end):listen( port, "127.0.0.1" )
   end
 
