@@ -101,6 +101,7 @@ function _G.times(n,f)
 end
 
 -- table funcs
+_G.join = table.concat
 _G.insert = table.insert
 _G.remove = table.remove
 function _G.merge(to,from)  -- overwrite merge
@@ -216,6 +217,28 @@ function _G.valcopy( tbl )
   end
   return out
 end
+function _G.slice(t,i1,i2)
+  local res = {}
+  local n = #t
+  -- default values for range
+  i1 = i1 or 1
+  i2 = i2 or n
+  if i2 < 0 then
+    i2 = n + i2 + 1
+  elseif i2 > n then
+    i2 = n
+  end
+  if i1 < 1 or i1 > n then
+    return {}
+  end
+  local k = 1
+  for i = i1,i2 do
+    res[k] = t[i]
+    k = k + 1
+  end
+  return res
+end
+
 function _G.deepcompare(t1,t2,ignore_mt,eps)
   local ty1 = type(t1)
   local ty2 = type(t2)
@@ -778,19 +801,14 @@ if ffi then
 
   function _G.cmd(s,cb)
     local tmp = makeTmpPath("/tmp/lumino_cmd")
-    local s = ffi.C.system( sprintf( "%s > %s 2>/dev/null", s, tmp ) )
+    local ret = ffi.C.system( sprintf( "%s > %s 2>/dev/null", s, tmp ) )
     local res = readFile(tmp)
-    if cb then cb(s,res) end
-    return res
-  end
-
-  function _G.mkdir(path,mode)
-    local ret = ffi.C.mkdir(path,mode)
-    if ret<0 then
-      return false
-    else
-      return true
+    unlink(tmp)
+    if not res and ret == 0 then -- lua io sucks: it returns nil if the file is empty.... not an empty string!
+      res = ""
     end
+    if cb then cb(ret,res) end
+    return res
   end
 
 
@@ -1007,6 +1025,31 @@ end
   
 -- luvit only
 if uv then
+  function _G.mkdir(path)
+    local err=false
+    xpcall(function()
+        fs.mkdirSync( path,755)
+      end,
+      function()
+        err=true
+      end)
+    if err then
+      return false
+    else
+      return true
+    end
+  end
+  
+  function _G.ensureDir(path)
+    local ary = split(path,"/")
+    for i=1,#ary do
+      local parents = slice(ary,1,i)
+      local dirp = join(parents,"/")
+      mkdir(dirp) 
+    end
+    return existFile(path) 
+  end
+  
   function _G.every(t,f)
     timer.setInterval(t*1000,f)
   end

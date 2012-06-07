@@ -3,7 +3,7 @@
 
 require("./lumino")
 
-
+-- basics
 assert( b2i(false)==0 )
 assert( b2i(true)==1 )
 assert( nilzero(nil)==0 )
@@ -47,6 +47,7 @@ assert( max(5,-1) == 5 )
 assert( max(-1,nil) == -1 )
 assert( max(nil,-1) == -1 )
 
+-- table
 t1 = {a=1,b=2,c=3}
 assert(keynum(t1)==3)
 ks = keys(t1)
@@ -121,6 +122,16 @@ assert( nearer( 1,2,3) == 2 )
 assert( nearer( 2,2,3) == 2 )
 assert( nearer( 1,3,2) == 2 )
 
+assert( join({1,2,3}," ") == "1 2 3")
+
+t = { 10,20,30,40,50}
+st = slice(t,2,-2)
+assert(st[1]==20)
+assert(st[2]==30)
+assert(st[3]==40)
+
+
+-- logging
 dump1( "dump1caption", {a=1,b=2,c=3})
 xpcall( function()
     not_defined()
@@ -144,6 +155,7 @@ dump(t)
 print( num2digitString(50))
 print( num2digitString(150))
 
+-- files
 path = "./_test.log"
 r=writeFile(path,"")
 assert(r)
@@ -362,10 +374,13 @@ if uv then
   assert(find(ary,"test.lua"))
   assert(find(ary,"lumino.lua"))
 
-  cmd("mkdir public_html") -- error ok
+  mkdir("public_html") -- error ok
   assert(existFile("public_html"))
   assert(writeFile("public_html/index.html","hoge"))
 
+  o=cmd("rm -rf a/b/c/d")
+  assert(ensureDir("a/b/c/d"))
+    
   _G.htok = false
   http.createServer(function(req,res)
       if not httpServeStaticFiles(req,res,"public_html",{"html","png"}) then
