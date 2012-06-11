@@ -100,6 +100,7 @@ function _G.times(n,f)
   for i=1,n do f(i) end
 end
 
+
 -- table funcs
 _G.join = table.concat
 _G.insert = table.insert
@@ -1316,7 +1317,7 @@ moai.LuvitNetEmu = {
 }
 
 
--- etc funcs
+-- etc/debug funcs
 function _G.Counter(max)
   local t = { max = max, n = max }
   function t:get()
@@ -1375,6 +1376,30 @@ function _G.strict()
 end
 function _G.nostrict()
   setmetatable(_G,nil)
+end
+
+function _G.dumplocal()
+  local variables = {}
+  local idx = 1
+  while true do
+    local ln, lv = dbg.getlocal(2, idx)
+    if ln ~= nil then
+      if ln:byte(1,1) ~= 40 then   -- exclude '(*temporary)'  40=string.byte('(')
+        table.insert( variables, { ln, lv } )
+      end
+    else
+      break
+    end
+    idx = 1 + idx
+  end
+
+  local out = ""
+  for i, v in ipairs(variables) do
+    local x,v = v[1], v[2]
+    out = out .. sprintf( "%s:%s\t", x, tostring(v) )
+  end
+  
+  return out
 end
 
 
