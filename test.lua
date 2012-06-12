@@ -130,6 +130,14 @@ assert(st[1]==20)
 assert(st[2]==30)
 assert(st[3]==40)
 
+tt = { 10,20,30}
+remove(tt,1)
+assert(#tt==2)
+assert(tt[1]==20)
+assert(tt[2]==30)
+shift(tt)
+assert(#tt==1)
+assert(tt[1]==30)
 
 -- logging
 dump1( "dump1caption", {a=1,b=2,c=3})

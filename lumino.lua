@@ -105,6 +105,9 @@ end
 _G.join = table.concat
 _G.insert = table.insert
 _G.remove = table.remove
+function _G.shift(t)
+  remove(t,1)
+end
 function _G.merge(to,from)  -- overwrite merge
   for k,v in pairs(from) do
     to[k]=v
@@ -424,7 +427,7 @@ if not uv then
     for i,v in ipairs(laterCalls) do
       if v.callAt < nt then
         v.func()
-        table.remove(laterCalls,i)
+        remove(laterCalls,i)
       end    
     end  
   end
