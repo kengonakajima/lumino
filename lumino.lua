@@ -1003,20 +1003,20 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
     p("file with arg: not supported")
     return false
   end
-  local extfound = false
+  if req.url:find("..") then
+    p("path has '..'")
+    return false
+  end
   for i,ext in ipairs(exts) do
     local suf = "." .. ext
     local at = 1 + ( #req.url - #suf)
 --    print( i,ext, #req.url, #suf, at )
     if req.url:find( suf,at,true ) then
-      extfound = true
       local fullpath = docroot .. req.url
       return httpSendFile(res,fullpath)
     end
   end
-  if extfound then 
-    httpSendRaw(res, 404, "text/plain", "not found")
-  end
+  httpSendRaw(res, 404, "text/plain", "not found")
 end
 
 if uv then
@@ -1028,7 +1028,7 @@ end
 
   
 -- luvit only
-if uv then
+if uv then  
   function _G.mkdir(path)
     local err=false
     xpcall(function()
@@ -1108,7 +1108,36 @@ if uv then
     end
     return nil
   end
-  
+
+
+  -- globs: { "./*.lua", "./*/*.lua" }
+  function _G.monitorFiles(globs,callback )
+    local lastmtime={}
+    every( 1, function()
+        for _,tgt in ipairs(globs) do
+          local cmd = "ls -1 " .. tgt 
+          local child = ch.spawn( "bash", { '-c', cmd }, nil ) -- { env = { TEST1 = 1 } } )
+          child.stdout:on("data", function(chunk)
+              local ary = split(chunk,"\n")
+              for _,path in ipairs(ary) do
+                if path ~= "" then
+                  local s = uv.fsStat(path)
+                  if not lastmtime[path] then
+                    lastmtime[path] = s.mtime
+                  else
+                    if lastmtime[path] ~= s.mtime then
+                      lastmtime[path] = s.mtime
+                      callback(path)
+                    end
+                  end                
+                end
+              end
+            end)
+        end  
+      end)
+  end
+
+
 end
 
   

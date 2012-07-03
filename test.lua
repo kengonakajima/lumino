@@ -429,7 +429,8 @@ if uv then
 --           print("http done")
 --         end)
     end)
-    
+
+  monitorFiles( { "./*.lua" }, function() end )
 end
 
 if MOAISim then
