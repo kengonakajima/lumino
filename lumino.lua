@@ -33,6 +33,7 @@ else
     _G.fs = require("fs")
     _G.querystring = require("querystring")
     _G.luvitutils = require("utils")
+    _G.spawn = require("childprocess").spawn
   end
 end
 
@@ -1158,7 +1159,7 @@ if uv then
     every( 1, function()
         for _,tgt in ipairs(globs) do
           local cmd = "ls -1 " .. tgt 
-          local child = ch.spawn( "bash", { '-c', cmd }, nil ) -- { env = { TEST1 = 1 } } )
+          local child = spawn( "bash", { '-c', cmd }, nil ) -- { env = { TEST1 = 1 } } )
           child.stdout:on("data", function(chunk)
               local ary = split(chunk,"\n")
               for _,path in ipairs(ary) do
