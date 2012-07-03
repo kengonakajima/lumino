@@ -18,6 +18,11 @@ assert( int(0.5)==0)
 assert( int(1.5)==1)
 assert( int(true)==1)
 assert( int(false)==0)
+
+assert( to_i("0.5")==0)
+assert( to_i(true)==1)
+assert( to_f("0.5")==0.5)
+
 a,b=int2(2.5,3.5)
 assert(a==2 and b==3)
 a,b,c=int3(2.5,3.5,4.5)

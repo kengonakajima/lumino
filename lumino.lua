@@ -61,9 +61,16 @@ function _G.int(x)
     end
   end  
 end
-_G.to_i = int
 function _G.int2(x,y) return int(x), int(y) end
 function _G.int3(a,b,c) return int(a),int(b),int(c) end
+function _G.to_i(s)
+  if type(s) == "string" then
+    return math.floor( tonumber(s) )
+  else
+    return int(s)
+  end  
+end
+function _G.to_f(s)  return tonumber(s) end
 function _G.range(a,b) return a + ( b - a ) * math.random() end
 function _G.irange(a,b) return math.floor(range(a,b)) end
 function _G.birandom() return (math.random() < 0.5) end
