@@ -31,7 +31,8 @@ else
     _G.http = require("http")
     _G.timer = require("timer")
     _G.fs = require("fs")
---    _G.utils = require("utils")
+    _G.querystring = require("querystring")
+    _G.luvitutils = require("utils")
   end
 end
 
@@ -343,6 +344,7 @@ function _G.prt(...)
   io.stdout:write(s)
   io.stdout:flush()
 end
+
 function _G.datePrint(...)
   local s = table.concat({...}," ")
   io.stdout:write( "[" .. os.date() .. "] " .. s .. "\n" )
@@ -470,6 +472,16 @@ function _G.existFile(fn)
 end
 
 -- json funcs
+if _G.JSON then
+  local origParse = JSON.parse
+  function JSON.parse(s)
+    local ok,ret=pcall(function()
+        return origParse(s)
+      end)
+    if not ok then return nil else return ret end
+  end
+end
+
 function _G.readJSON(path)
   local s = readFile(path)
   if s then
@@ -983,17 +995,36 @@ function _G.httpRespond(req,res,funcs)
   function res:sendError(code,body)
     return httpSendRaw(self,code,"text/html","<html><body>error code:" .. code .. "</body></html>\n")
   end
-  
-  local f = funcs[fname]
-  if f then
-    f(req,res)
+
+
+  local responder
+  local responder = funcs[fname]
+  if not responder then
+    if funcs.default then
+      responder = funcs.default
+    end
+    if not responder then
+      print("func not found:", fname )
+      return false
+    end    
+  end
+
+  local expectLen = req.headers["content-length"]
+  if req.method=="POST" then
+    req.chunks = {}
+    req:on("data",function(data)
+        insert( req.chunks, data )
+      end)
+    req:on("end",function()
+        req.body = join(req.chunks)
+        responder(req,res)
+      end)
+    return false
+  elseif req.method == "GET" then
+    responder(req,res)
     return true
   end
-  print("func not found:", fname )
-  if funcs.default then
-    funcs.default(req,res)
-    return true
-  end
+  print("invalid method:", req.method )
   return false
 end
 
@@ -1019,6 +1050,11 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
   httpSendRaw(res, 404, "text/plain", "not found")
 end
 
+
+
+
+
+
 if uv then
   _G.exit = process.exit
 else
@@ -1026,9 +1062,15 @@ else
 end
 
 
-  
+_G.pp = print
+
 -- luvit only
-if uv then  
+if uv then
+   _G.pp = luvitutils.prettyPrint
+   _G.urldecode = querystring.urldecode
+   _G.urlencode = querystring.urlencode
+   _G.parseQueryString = querystring.parse
+    
   function _G.mkdir(path)
     local err=false
     xpcall(function()

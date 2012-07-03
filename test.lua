@@ -433,6 +433,22 @@ if uv then
   monitorFiles( { "./*.lua" }, function() end )
 end
 
+if uv then
+  assert( JSON.parse( "{" ) == nil )
+  assert( JSON.parse( "{}" ) ~= nil )  
+  local s="a ほげ +az;&%'$#\"\'"
+  assert( urldecode( urlencode(s))==s)
+  local qs = "payload={\"a\":1,\"b\":2}&opt=AAA"
+  local parsed = parseQueryString( qs )
+  assert( parsed.payload=="{\"a\":1,\"b\":2}")
+  assert( parsed.opt=="AAA")
+  local t = JSON.parse(parsed.payload)
+  assert( t.a==1 )
+  assert( t.b==2 )
+  pp(t)
+end
+
+
 if MOAISim then
   -- TODO: makeHitRect(prop, sz )
   -- TODO: propDistance(p0,p1)
