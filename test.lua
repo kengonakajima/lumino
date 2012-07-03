@@ -22,6 +22,7 @@ assert( int(false)==0)
 assert( to_i("0.5")==0)
 assert( to_i(true)==1)
 assert( to_f("0.5")==0.5)
+assert( to_s(123)=="123")
 
 a,b=int2(2.5,3.5)
 assert(a==2 and b==3)

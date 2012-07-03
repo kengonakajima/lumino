@@ -71,6 +71,7 @@ function _G.to_i(s)
   end  
 end
 function _G.to_f(s)  return tonumber(s) end
+function _G.to_s(n)  return tostring(n) end
 function _G.range(a,b) return a + ( b - a ) * math.random() end
 function _G.irange(a,b) return math.floor(range(a,b)) end
 function _G.birandom() return (math.random() < 0.5) end
@@ -1022,7 +1023,7 @@ function _G.httpRespond(req,res,funcs)
   end
 
   local expectLen = req.headers["content-length"]
-  print("METH:", req.method, req.url )
+
   if req.method=="POST" then
     req.chunks = {}
     req:on("data",function(data)
