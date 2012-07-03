@@ -1011,6 +1011,7 @@ function _G.httpRespond(req,res,funcs)
   end
 
   local expectLen = req.headers["content-length"]
+  print("METH:", req.method, req.url )
   if req.method=="POST" then
     req.chunks = {}
     req:on("data",function(data)
@@ -1035,10 +1036,11 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
     p("file with arg: not supported")
     return false
   end
-  if req.url:find("..") then
-    p("path has '..'")
+  if req.url:find("%.%.") then
+    p("path has '..' : ", req.url )
     return false
   end
+  local foundext = false
   for i,ext in ipairs(exts) do
     local suf = "." .. ext
     local at = 1 + ( #req.url - #suf)
@@ -1048,12 +1050,8 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
       return httpSendFile(res,fullpath)
     end
   end
-  httpSendRaw(res, 404, "text/plain", "not found")
+  return false
 end
-
-
-
-
 
 
 if uv then
