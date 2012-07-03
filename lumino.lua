@@ -31,7 +31,8 @@ else
     _G.http = require("http")
     _G.timer = require("timer")
     _G.fs = require("fs")
---    _G.utils = require("utils")
+    _G.querystring = require("querystring")
+    _G.luvitutils = require("utils")
   end
 end
 
@@ -343,6 +344,7 @@ function _G.prt(...)
   io.stdout:write(s)
   io.stdout:flush()
 end
+
 function _G.datePrint(...)
   local s = table.concat({...}," ")
   io.stdout:write( "[" .. os.date() .. "] " .. s .. "\n" )
@@ -983,17 +985,31 @@ function _G.httpRespond(req,res,funcs)
   function res:sendError(code,body)
     return httpSendRaw(self,code,"text/html","<html><body>error code:" .. code .. "</body></html>\n")
   end
-  
-  local f = funcs[fname]
-  if f then
-    f(req,res)
+
+
+  local responder
+  local responder = funcs[fname]
+  if not responder then
+    if funcs.default then
+      responder = funcs.default
+    end
+    if not responder then
+      print("func not found:", fname )
+      return false
+    end    
+  end
+
+  if req.method=="POST" then
+    req:on("data",function(data)
+        req.body = data
+        responder(req,res)
+      end)
+    
+  elseif req.method == "GET" then
+    responder(req,res)
     return true
   end
-  print("func not found:", fname )
-  if funcs.default then
-    funcs.default(req,res)
-    return true
-  end
+  print("invalid method:", req.method )
   return false
 end
 
@@ -1019,6 +1035,11 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
   end
 end
 
+
+
+
+
+
 if uv then
   _G.exit = process.exit
 else
@@ -1026,9 +1047,15 @@ else
 end
 
 
-  
+_G.pp = print
+
 -- luvit only
 if uv then
+   _G.pp = luvitutils.prettyPrint
+   _G.urldecode = querystring.urldecode
+   _G.urlencode = querystring.urlencode
+   _G.parseQueryString = querystring.parse
+    
   function _G.mkdir(path)
     local err=false
     xpcall(function()
