@@ -472,6 +472,16 @@ function _G.existFile(fn)
 end
 
 -- json funcs
+if _G.JSON then
+  local origParse = JSON.parse
+  function JSON.parse(s)
+    local ok,ret=pcall(function()
+        return origParse(s)
+      end)
+    if not ok then return nil else return ret end
+  end
+end
+
 function _G.readJSON(path)
   local s = readFile(path)
   if s then
@@ -999,12 +1009,17 @@ function _G.httpRespond(req,res,funcs)
     end    
   end
 
+  local expectLen = req.headers["content-length"]
   if req.method=="POST" then
+    req.chunks = {}
     req:on("data",function(data)
-        req.body = data
+        insert( req.chunks, data )
+      end)
+    req:on("end",function()
+        req.body = join(req.chunks)
         responder(req,res)
       end)
-    
+    return false
   elseif req.method == "GET" then
     responder(req,res)
     return true

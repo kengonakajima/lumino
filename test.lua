@@ -433,6 +433,8 @@ if uv then
 end
 
 if uv then
+  assert( JSON.parse( "{" ) == nil )
+  assert( JSON.parse( "{}" ) ~= nil )  
   local s="a ほげ +az;&%'$#\"\'"
   assert( urldecode( urlencode(s))==s)
   local qs = "payload={\"a\":1,\"b\":2}&opt=AAA"
