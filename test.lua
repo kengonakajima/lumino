@@ -47,6 +47,10 @@ assert( max(5,-1) == 5 )
 assert( max(-1,nil) == -1 )
 assert( max(nil,-1) == -1 )
 
+assert( typeof("string") == "string" )
+assert( typeof(1) == "number" )
+assert( typeof({}) == "table" )
+
 -- table
 t1 = {a=1,b=2,c=3}
 assert(keynum(t1)==3)

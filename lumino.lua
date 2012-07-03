@@ -61,6 +61,7 @@ function _G.int(x)
     end
   end  
 end
+_G.to_i = int
 function _G.int2(x,y) return int(x), int(y) end
 function _G.int3(a,b,c) return int(a),int(b),int(c) end
 function _G.range(a,b) return a + ( b - a ) * math.random() end
@@ -96,6 +97,9 @@ function _G.max(a,b)
   if not b then return a end   
   if a > b then return a else return b end
 end
+
+-- lua typeof
+_G.typeof = type
 
 -- loop funcs
 function _G.times(n,f)
