@@ -54,9 +54,20 @@ assert( max(5,-1) == 5 )
 assert( max(-1,nil) == -1 )
 assert( max(nil,-1) == -1 )
 
+-- types
 assert( typeof("string") == "string" )
 assert( typeof(1) == "number" )
 assert( typeof({}) == "table" )
+
+muststring( "aho" )
+mustnumber( 1.5)
+musttable( {a=1} )
+local ok,ret = pcall(function() muststring(1) end)
+assert(not ok)
+local ok,ret = pcall(function() mustnumber({a=1}) end)
+assert(not ok)
+local ok,ret = pcall(function() musttable("q") end)
+assert(not ok)
 
 -- table
 t1 = {a=1,b=2,c=3}

@@ -109,6 +109,17 @@ end
 -- lua typeof
 _G.typeof = type
 
+-- guards
+function _G.muststring(s)
+  assert( typeof(s)=="string")
+end
+function _G.mustnumber(n)
+  assert( typeof(n)=="number" )
+end
+function _G.musttable(t)
+  assert( typeof(t)=="table" )
+end
+
 -- loop funcs
 function _G.times(n,f)
   for i=1,n do f(i) end
