@@ -379,11 +379,13 @@ if uv then
   assert(r==nil)
 
   -- read JSON that has number keys and values as numbers
-  t = { [4] = 5, [7]={ ["9"]="10", [11]="aa"},[15]={ { 20,"21","22" }, {"aa",33,40}, { [50]=60,["70"]=80} } } 
+  t = { a = 1, b={2,3}, [7]={ ["9"]="10", [11]="aa"},[15]={ { 20,"21","22" }, {"aa",33,40}, { [50]=60,["70"]=80} } } 
   assert(writeJSON("./_test_j4.json",t))
   r=readJSON("./_test_j4.json")
   assert(r)
-  assert(r[4]==5)
+  assert(r.a==1)
+  assert(r.b[1]==2)
+  assert(r.b[2]==3)
   assert(r[7])
   assert(r[7][9]==10) 
   assert(r[7][11]=="aa")

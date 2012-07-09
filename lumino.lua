@@ -318,12 +318,16 @@ function _G.table.tonumber(t)
         end        
       end
     else
-      local nv = tonumber(v)
-      if nv then
-        out[k]=nv
+      if typeof(v)=="table" then
+        out[k]=table.tonumber(v)
       else
-        out[k]=v
-      end      
+        local nv = tonumber(v)
+        if nv then
+          out[k]=nv
+        else
+          out[k]=v
+        end
+      end
     end    
   end
   return out
