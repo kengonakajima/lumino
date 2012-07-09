@@ -378,19 +378,19 @@ if uv then
   r = mergeJSONs( "not_found_1", "not_found_2", "not_found_3" )
   assert(r==nil)
 
-  -- read JSON that has number string as keys
-  t = { [4] = 5, [7]={ ["9"]=10, [11]=13},[15]={ { 20,21,22 }, {23,33,40}, { [50]=60,["70"]=80} } } 
+  -- read JSON that has number keys and values as numbers
+  t = { [4] = 5, [7]={ ["9"]="10", [11]="aa"},[15]={ { 20,"21","22" }, {"aa",33,40}, { [50]=60,["70"]=80} } } 
   assert(writeJSON("./_test_j4.json",t))
   r=readJSON("./_test_j4.json")
   assert(r)
   assert(r[4]==5)
   assert(r[7])
-  assert(r[7][9]==10) -- converted to number key
-  assert(r[7][11]==13)
+  assert(r[7][9]==10) 
+  assert(r[7][11]=="aa")
   assert(r[15][1][1]==20)
   assert(r[15][1][2]==21)
   assert(r[15][1][3]==22)
-  assert(r[15][2][1]==23)
+  assert(r[15][2][1]=="aa")
   assert(r[15][2][2]==33)
   assert(r[15][2][3]==40)
   assert(r[15][3][50]==60)

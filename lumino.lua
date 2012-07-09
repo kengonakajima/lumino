@@ -302,18 +302,28 @@ function _G.deepcompare(t1,t2,ignore_mt,eps)
 end
 
 -- recursively tonumber(k)
-function _G.toNumberKey(t)
+function _G.table.tonumber(t)
   local out={}
   for k,v in pairs(t) do
     local n = tonumber(k)
     if n then
       if typeof(v)=="table" then
-        out[n]=toNumberKey(v)
+        out[n]=table.tonumber(v)
       else
-        out[n]=v
+        local nv = tonumber(v)
+        if nv then
+          out[n]=nv
+        else
+          out[n]=v
+        end        
       end
     else
-      out[k]=v
+      local nv = tonumber(v)
+      if nv then
+        out[k]=nv
+      else
+        out[k]=v
+      end      
     end    
   end
   return out
@@ -530,7 +540,7 @@ if _G.JSON then
     local s = readFile(path)
     if s then
       local t = JSON.parse(s)
-      return toNumberKey(t)
+      return table.tonumber(t)
     else
       return nil
     end
