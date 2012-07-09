@@ -112,12 +112,15 @@ _G.typeof = type
 -- guards
 function _G.muststring(s)
   assert( typeof(s)=="string", "not a string" )
+  return s
 end
 function _G.mustnumber(n)
   assert( typeof(n)=="number", "not a number" )
+  return n
 end
 function _G.musttable(t)
   assert( typeof(t)=="table", "not a table" )
+  return t
 end
 
 -- loop funcs
