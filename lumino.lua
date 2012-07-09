@@ -994,7 +994,15 @@ end
 -- funcs: table with keys of function names
 -- /FUNCNMAE/ARG1/ARG2/..?a=VAL&b=VAL
 function _G.httpRespond(req,res,funcs)
-  local pathary = split(req.url, "/")
+  local url = req.url
+  local qstart,qend,matched = url:find("%?(.*)$")
+  if matched then
+    req.query = matched
+    url = url:gsub( "%?.*$","")
+  else
+    req.query = nil
+  end
+  local pathary = split(url, "/")
   remove(pathary,1) -- left token of the first /
   local fname = pathary[1]
   remove(pathary,1)
@@ -1003,7 +1011,7 @@ function _G.httpRespond(req,res,funcs)
     if n then
       pathary[i] = n
     end
-  end
+  end  
   
   req.paths = pathary
 
@@ -1055,21 +1063,20 @@ end
 
 function _G.httpServeStaticFiles(req,res,docroot,exts)
   assert(type(docroot)=="string" and #docroot>0)
-  if req.url:find("?") then
-    p("file with arg: not supported")
-    return false
-  end
-  if req.url:find("%.%.") then
-    p("path has '..' : ", req.url )
+  local url = req.url
+  url = url:gsub("%?.*$","")
+
+  if url:find("%.%.") then
+    p("path has '..' : ", url )
     return false
   end
   local foundext = false
   for i,ext in ipairs(exts) do
     local suf = "." .. ext
-    local at = 1 + ( #req.url - #suf)
---    print( i,ext, #req.url, #suf, at )
-    if req.url:find( suf,at,true ) then
-      local fullpath = docroot .. req.url
+    local at = 1 + ( #url - #suf)
+--    print( i,ext, #url, #suf, at )
+    if url:find( suf,at,true ) then
+      local fullpath = docroot .. url
       return httpSendFile(res,fullpath)
     end
   end
