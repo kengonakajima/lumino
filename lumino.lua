@@ -187,7 +187,7 @@ function _G.filter(t,f)
 end
 function _G.count(t,f)
   local cnt=0
-  for i,v in ipairs(t) do
+  for i,v in pairs(t) do
     if (not f) or f(v) then cnt = cnt + 1 end
   end
   return cnt
