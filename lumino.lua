@@ -298,6 +298,24 @@ function _G.deepcompare(t1,t2,ignore_mt,eps)
   return true
 end
 
+-- recursively tonumber(k)
+function _G.toNumberKey(t)
+  local out={}
+  for k,v in pairs(t) do
+    local n = tonumber(k)
+    if n then
+      if typeof(v)=="table" then
+        out[n]=toNumberKey(v)
+      else
+        out[n]=v
+      end
+    else
+      out[k]=v
+    end    
+  end
+  return out
+end
+
 -- string funcs
 _G.byte = string.byte
 function _G.split(str, delim)
@@ -504,32 +522,34 @@ if _G.JSON then
       end)
     if not ok then return nil else return ret end
   end
+
+  function _G.readJSON(path)
+    local s = readFile(path)
+    if s then
+      local t = JSON.parse(s)
+      return toNumberKey(t)
+    else
+      return nil
+    end
+  end
+  function _G.writeJSON(path,t)
+    return writeFile(path, JSON.stringify(t))
+  end
+  function _G.mergeJSONs(...)
+    local paths={...}
+    local out={}
+    local foundAny=false
+    for i,path in ipairs(paths) do
+      local t = readJSON(path)
+      if t then
+        merge(out,t)
+        foundAny = true
+      end    
+    end
+    if not foundAny then return nil else return out end
+  end
 end
 
-function _G.readJSON(path)
-  local s = readFile(path)
-  if s then
-    return JSON.parse(s)
-  else
-    return nil
-  end
-end
-function _G.writeJSON(path,t)
-  return writeFile(path, JSON.stringify(t))
-end
-function _G.mergeJSONs(...)
-  local paths={...}
-  local out={}
-  local foundAny=false
-  for i,path in ipairs(paths) do
-    local t = readJSON(path)
-    if t then
-      merge(out,t)
-      foundAny = true
-    end    
-  end
-  if not foundAny then return nil else return out end
-end
 
 
 -- csv funcs

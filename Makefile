@@ -13,7 +13,7 @@ endif
 # for travis-ci DNS resolv error..
 
 
-test: luatest luvittest
+test: luvittest luatest 
 	echo lua and luvit test done
 
 hogetest:
