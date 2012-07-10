@@ -374,6 +374,22 @@ function _G.trim(s)
 end
 _G.string.trim = trim
 
+function _G.string.divide(orig,unit)
+  local out={}
+  local startAt=1
+  while true do
+    local endAt = startAt + (unit-1)
+    local s = orig:sub(startAt,endAt)
+    if #s > 0 then
+      table.insert(out,s)
+    else
+      break
+    end    
+    startAt = startAt + unit
+  end
+  return out  
+end
+
 -- return value nearer to __from__
 function _G.nearer(from,a,b)
   local da = math.abs(a-from)

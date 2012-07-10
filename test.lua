@@ -161,6 +161,23 @@ shift(tt)
 assert(#tt==1)
 assert(tt[1]==30)
 
+-- string
+origs="ABCABC"
+t=origs:divide(3)
+assert(#t==2)
+assert(t[1]=="ABC")
+assert(t[2]=="ABC")
+assert(join(t)==origs)
+
+origs="abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz abcdefghijklmnopqrstuvwxyz"
+t=origs:divide(26)
+assert(#t==4)
+assert(t[1]=="abcdefghijklmnopqrstuvwxyz")
+assert(t[2]==" abcdefghijklmnopqrstuvwxy")
+assert(t[3]=="z abcdefghijklmnopqrstuvwx")
+assert(t[4]=="yz")
+assert(join(t)==origs)
+
 
 -- logging
 dump1( "dump1caption", {a=1,b=2,c=3})
