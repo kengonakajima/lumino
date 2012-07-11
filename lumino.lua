@@ -515,7 +515,11 @@ else
 
 end
 
+function _G.nowi()
+  return int(now())
+end  
 
+  
 -- file funcs
 function _G.readFile(path)
   local ok, data = pcall( function()

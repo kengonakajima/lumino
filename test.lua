@@ -356,7 +356,6 @@ print( hoge(1,2,3))
 assert( hoge(1,2,3) == "a:1\tb:2\tc:3\t" )
 
 
-
 -- TODO: sendmail( from, to, subj, msg )
 
 assert( isUsableInName( "ringoRINGO_01-83" ) )
