@@ -719,7 +719,7 @@ end
 function _G.makeHitRect(prop, sz )
   assert(sz)
   local x,y = prop:getLoc()
-  return { x0 = x - sz, y0 = y - sz, x1 = x + sz, y1 = y + sz }
+  return Rect( x - sz, y - sz, x + sz, y + sz )
 end
 function _G.checkHitRects(rects, x,y,arg, cb)
   for i,v in ipairs(rects) do
