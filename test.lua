@@ -152,6 +152,18 @@ assert(st[1]==20)
 assert(st[2]==30)
 assert(st[3]==40)
 
+st = slice(t,3)
+assert(st[1]==30)
+assert(st[2]==40)
+assert(st[3]==50)
+
+st = slice(t,8)
+assert(#st==0)
+
+
+
+
+
 tt = { 10,20,30}
 remove(tt,1)
 assert(#tt==2)
