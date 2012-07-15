@@ -1332,7 +1332,7 @@ end
 
 
 function moai.loadWav( fn ,v)
-  if not hasSound then
+  if not MOAIUntzSystem then
     local dummy = {}
     function dummy:play()    end
     function dummy:playDistance()    end    
