@@ -301,7 +301,24 @@ function _G.deepcompare(t1,t2,ignore_mt,eps)
   return true
 end
 
--- recursively tonumber(k)
+-- remove data types (recurse)
+function _G.removeTypes(t,rmtype)
+  local out={}
+  for k,v in pairs(t) do
+    local tname = typeof(v)
+    if tname == rmtype then
+    else
+      if tname == "table" then
+        out[k] = _G.removeTypes(t[k],rmtype)
+      else
+        out[k] = t[k]
+      end      
+    end    
+  end
+  return out
+end
+
+-- recursively tonumber(key)
 function _G.table.tonumber(t)
   local out={}
   for k,v in pairs(t) do
@@ -707,7 +724,7 @@ end
 -- rect funcs
 function _G.Rect(minx,miny,maxx,maxy)
   local r = { minx=minx, maxx=maxx, miny=miny,maxy=maxy }
-  function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end  
+  function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end
   return r
 end
 function _G.squareRect(cx,cy,w)

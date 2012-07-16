@@ -160,10 +160,6 @@ assert(st[3]==50)
 st = slice(t,8)
 assert(#st==0)
 
-
-
-
-
 tt = { 10,20,30}
 remove(tt,1)
 assert(#tt==2)
@@ -172,6 +168,16 @@ assert(tt[2]==30)
 shift(tt)
 assert(#tt==1)
 assert(tt[1]==30)
+
+t={ a=1, b=2, c=function() end, d={ e=5,f=function() end,g=7 } }
+tt=removeTypes(t,"function")
+assert( tt.a==1 )
+assert( tt.b==2 )
+assert( tt.c==nil )
+assert( tt.d.e == 5 )
+assert( tt.d.f == nil )
+assert( tt.d.g == 7 )
+
 
 -- string
 origs="ABCABC"
