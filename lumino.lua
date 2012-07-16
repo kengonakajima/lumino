@@ -725,6 +725,7 @@ end
 function _G.Rect(minx,miny,maxx,maxy)
   local r = { minx=minx, maxx=maxx, miny=miny,maxy=maxy }
   function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end
+  function r:toData() return removeTypes(self, "function" ) end
   return r
 end
 function _G.squareRect(cx,cy,w)

@@ -337,6 +337,11 @@ scanRect(0,0,2,2,function(x,y)
     cnt = cnt + 1
   end)
 assert(cnt==(3*3))
+r = Rect(1,1,2,2)
+t = r:toData()
+assert( t.include==nil)
+assert( t.toData==nil)
+
 
 -- 4dirs
 assert( dir2char(DIR.UP) == "^")
