@@ -423,8 +423,16 @@ function _G.dump1(s,t)
   for k,v in pairs(t) do print( s, k,v ) end
 end
 function _G.printTrace(erro)
-  print( erro )
-  print( debug.traceback(100) )
+  if erro then
+    print( erro )
+    print( debug.traceback(100) )
+  else
+    xpcall( function() debug_nodefunc() end,
+      function(e)
+        local s = debug.traceback(e)
+        print("LOG:", s)
+      end)
+  end  
 end
 function _G.sprintf(...) return string.format(...) end
 function _G.printf(...)

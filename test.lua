@@ -207,6 +207,8 @@ xpcall( function()
     printTrace(e)
   end
 )
+printTrace()
+
 printf("%02x", 1 )
 assert(sprintf("%02x", 1 ) == "01" )
 
