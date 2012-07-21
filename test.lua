@@ -101,7 +101,7 @@ scan(t1,function(v)
     tot = tot + v
   end)
 assert(tot==(6+8+10+15))
-out = filter(t1, function(v) if v~= 15 then return v end end)
+out = table.select(t1, function(v) if v~= 15 then return v end end)
 table.sort(out)
 assert( out[1] == 6 and out[2] == 8 and out[3] == 10 )
 assert( count(t1) == 4 )

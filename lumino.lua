@@ -175,7 +175,7 @@ function _G.scan(t,f)
 end
 _G.each = _G.scan
 
-function _G.filter(t,f)
+function table.select(t,f)
  local out={}
   for i,v in ipairs(t) do
     local r = f(v)
