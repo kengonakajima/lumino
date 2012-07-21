@@ -427,7 +427,7 @@ function _G.printTrace(erro)
     print( erro )
     print( debug.traceback(100) )
   else
-    xpcall( function() debug_nodefunc() end,
+    xpcall( function() caused_by_printTrace() end,
       function(e)
         local s = debug.traceback(e)
         print("LOG:", s)
