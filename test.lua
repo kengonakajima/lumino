@@ -90,6 +90,7 @@ for i=1,100 do
   local out = choose(t1)
   assert(out==10 or out==15 or out==6 or out==8)
 end
+assert( choose(nil)==nil)
 
 assert( find(t1,10) == 10 )
 assert( find(t1,595) == nil )

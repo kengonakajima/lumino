@@ -146,7 +146,10 @@ function _G.sort(t,f)
   table.sort(t,f)
   return t  
 end
-function _G.choose(ary) return ary[ int(  math.random() * #ary ) + 1] end
+function _G.choose(ary)
+  if not ary then return nil end
+  return ary[ int(  math.random() * #ary ) + 1]
+end
 function _G.shuffle(array)
   local arrayCount = #array
   for i = arrayCount, 2, -1 do
