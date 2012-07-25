@@ -4,6 +4,10 @@
 require("./lumino")
 
 -- basics
+assert( isnan(0/0) )
+assert( isnan(1/0) == false )
+assert( isnan(-1/0) == false )
+assert( isnan(1) == false )
 assert( b2i(false)==0 )
 assert( b2i(true)==1 )
 assert( nilzero(nil)==0 )

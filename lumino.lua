@@ -39,6 +39,7 @@ end
 
 -- math and lua values
 -- bool to integer
+function _G.isnan(n) return ( n ~= n ) end 
 function _G.b2i(b) if b then return 1 else return 0 end end
 function _G.nilzero(v) if v == nil then return 0 else return v end end
 _G.abs = math.abs
