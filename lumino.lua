@@ -49,6 +49,7 @@ function _G.neareq(v1,v2) return (abs(v2-v1) < epsilon) end
 function _G.len(x0,y0,x1,y1) return math.sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) ) end
 function _G.normalize(x,y,l)
   ll = len(0,0,x,y)
+  assert( ll>0, "invalid arg! length is 0")  
   return x / ll * l, y / ll * l
 end
 function _G.int(x)
