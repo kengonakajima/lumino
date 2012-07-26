@@ -434,13 +434,16 @@ end
 function _G.printTrace(erro)
   if erro then
     print( erro )
-    print( require("debug").traceback(100) )
+    local s = require("debug").traceback(100) 
+    print(s)
   else
+    local s
     xpcall( function() caused_by_printTrace() end,
       function(e)
-        local s = require("debug").traceback(e)
+        s = require("debug").traceback(e)
         print("LOG:", s)
       end)
+    return s
   end  
 end
 function _G.sprintf(...) return string.format(...) end
