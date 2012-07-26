@@ -107,6 +107,9 @@ function _G.max(a,b)
   if not b then return a end   
   if a > b then return a else return b end
 end
+function _G.ternary(cond,t,f)
+  if(cond) then return t else return f end
+end
 
 -- lua typeof
 _G.typeof = type

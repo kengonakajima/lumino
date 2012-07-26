@@ -57,6 +57,8 @@ assert( max(-1,5) == 5 )
 assert( max(5,-1) == 5 )
 assert( max(-1,nil) == -1 )
 assert( max(nil,-1) == -1 )
+assert( ternary(false,1,2)==2)
+assert( ternary(true,1,2)==1)
 
 -- types
 assert( typeof("string") == "string" )
