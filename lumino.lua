@@ -110,6 +110,7 @@ end
 function _G.ternary(cond,t,f)
   if(cond) then return t else return f end
 end
+_G.cond = ternary
 
 -- lua typeof
 _G.typeof = type
