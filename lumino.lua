@@ -49,7 +49,7 @@ function _G.neareq(v1,v2) return (abs(v2-v1) < epsilon) end
 function _G.len(x0,y0,x1,y1) return math.sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) ) end
 function _G.normalize(x,y,l)
   ll = len(0,0,x,y)
-  assert( ll>0, "invalid arg! length is 0")  
+  if ll==0 then return 0,0 end
   return x / ll * l, y / ll * l
 end
 function _G.int(x)
@@ -703,6 +703,7 @@ end
 function _G.vec3dot(v1,v2) return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z end
 function _G.vec3normalize(v)
   local l = math.sqrt( v.x*v.x + v.y*v.y + v.z*v.z )
+  if l==0 then return vec3(0,0,0) end
   return vec3(v.x/l, v.y/l, v.z/l)
 end
 function _G.vec3(x,y,z) return {x=x,y=y,z=z} end
