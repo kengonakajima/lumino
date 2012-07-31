@@ -149,7 +149,11 @@ function _G.merge(to,from)  -- overwrite merge
   return to
 end
 function _G.sort(t,f)
-  table.sort(t,f)
+  if f then
+    table.sort(t,f)
+  else
+    table.sort(t, function(a,b) return a<b end )
+  end
   return t  
 end
 function _G.choose(ary)
@@ -208,6 +212,14 @@ function _G.keys(t)
   end
   return out
 end
+function _G.values(t)
+  local out = {}
+  for k,v in pairs(t) do
+    table.insert(out,v)
+  end
+  return out
+end
+
 function _G.keynum(t)
   local cnt=0
   for k,v in pairs(t) do

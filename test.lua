@@ -90,8 +90,17 @@ assert( ks[3]=="c")
 t2 = {d=4,e=5,f=6}
 out = merge(t1,t2)
 assert(out.d==4 and out.a==1 and out.e==5 and out.f==6 )
+t3 = {g=7,h=8,i=9}
+out = sort(values(t3))
+assert(out[1]==7)
+assert(out[2]==8)
+assert(out[3]==9)
 
-
+t0 = {7,3,5}
+s = sort(t0)
+assert(s[1]==3)
+assert(s[2]==5)
+assert(s[3]==7)
 t1 = {10,15,6,8}
 s = sort(t1, function(a,b) return a<b end )
 assert( s[1] == 6 and s[2] == 8 and s[3] ==10 and s[4] == 15 )
