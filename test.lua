@@ -378,6 +378,9 @@ assert( reverseDir(DIR.RIGHT)==DIR.LEFT)
 area = calcArea( {0,0,  0,2,  2,2,  2,0 } )
 assert(area ==4)
 
+
+
+
 -- loop
 a=1
 times(100,function()a=a+1 end)
@@ -410,7 +413,14 @@ assert( generateNewId() == 1)
 assert( generateNewId() == 2)
 
 -- UNIX funcs (luvit only test)
-if uv then  
+if uv then
+  -- colors (need bitopts)
+  r,g,b = i32toRGB( 16777214 )
+  assert(r==255)
+  assert(g==255)
+  assert(b==254)
+
+  -- basic
   pid1 = getpid()
   pid2 = getpid()
   assert( pid1 == pid2 )
@@ -599,6 +609,7 @@ xpm:set(7,7,c2)
 xpm:set(8,8,c2)
 out = xpm:out( "hoge") 
 print( out )
+
 
 
 _G.normalOK = true

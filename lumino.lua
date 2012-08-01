@@ -31,6 +31,7 @@ else
     _G.http = require("http")
     _G.timer = require("timer")
     _G.fs = require("fs")
+    _G.bit = require("bit")
     _G.querystring = require("querystring")
     _G.luvitutils = require("utils")
     _G.spawn = require("childprocess").spawn
@@ -802,7 +803,6 @@ function _G.scanRect(x0,y0,x1,y1,fn)
 end
 
 
-
 -- 4dirs
 _G.DIR = { UP=0,RIGHT=1,DOWN=2,LEFT=3 }
 _G.DIRS = { DIR.UP, DIR.RIGHT, DIR.DOWN, DIR.LEFT }
@@ -837,6 +837,8 @@ function _G.calcArea( poly )
   topy = max( max(y0,y1), max(y2,y3) )
   return ( rightx - leftx ) * ( topy - bottomy )
 end
+
+
 
 
 -- networking and DB
@@ -1207,7 +1209,7 @@ if uv then
    _G.urldecode = querystring.urldecode
    _G.urlencode = querystring.urlencode
    _G.parseQueryString = querystring.parse
-    
+   
   function _G.mkdir(path)
     local err=false
     xpcall(function()
@@ -1316,6 +1318,11 @@ if uv then
       end)
   end
 
+  -- colors
+  function _G.i32toRGB(v)
+    local r,g,b = bit.rshift( bit.band( v,0xff0000 ), 16 ), bit.rshift( bit.band( v,0xff00 ), 8 ), bit.band( v,0xff )  
+    return r,g,b
+  end
 
 end
 
