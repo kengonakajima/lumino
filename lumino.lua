@@ -1652,10 +1652,10 @@ function _G.XPMImage(w,h)
       table.insert( outary, string.format( "\"%s c %s\",\n", self:col2str(i), self.colors[i] ) )
     end
       
-    for y=0,self.width-1 do
+    for y=0,self.height-1 do
       local row = self.pixels[y+1]
       local rowstrary = {}
-      for x=0,self.height-1 do
+      for x=0,self.width-1 do
         if not row then
           table.insert( rowstrary, "<>" )
         else
