@@ -590,6 +590,17 @@ if MOAISim then
 end
 
 
+xpm = XPMImage(10,10)
+c1 = xpm:addColor(255,0,0)
+c2 = xpm:addColor(0,255,0)
+xpm:set(1,1,c1)
+xpm:set(2,2,c1)
+xpm:set(7,7,c2)
+xpm:set(8,8,c2)
+out = xpm:out( "hoge") 
+print( out )
+
+
 _G.normalOK = true
 
 function checkEverythingOK()
