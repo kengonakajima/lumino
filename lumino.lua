@@ -1181,14 +1181,17 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
     return false
   end
   local foundext = false
-  for i,ext in ipairs(exts) do
-    local suf = "." .. ext
-    local at = 1 + ( #url - #suf)
---    print( i,ext, #url, #suf, at )
-    if url:find( suf,at,true ) then
-      local fullpath = docroot .. url
-      return httpSendFile(res,fullpath)
+  if exts then
+    for i,ext in ipairs(exts) do
+      local suf = "." .. ext
+      local at = 1 + ( #url - #suf)
+      --    print( i,ext, #url, #suf, at )
+      if url:find( suf,at,true ) then
+        return httpSendFile(res,docroot .. url)
+      end
     end
+  else
+    return httpSendFile(res,docroot .. url)
   end
   return false
 end
