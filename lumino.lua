@@ -1077,7 +1077,12 @@ function _G.httpSendFile(res,path)
     code = 404
     data = "not found"
   end
-  return httpSendRaw(res,code,mt,data)
+
+  if code == 200 then
+    return httpSendRaw(res,code,mt,data)    
+  else
+    return false
+  end  
 end
 
 function _G.httpSendRaw(res,code,ct,data)
