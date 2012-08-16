@@ -12,5 +12,3 @@ Lua utility routines for minimalist MMOG devs
  - Everything in _G
  - Single file deployment, no require() hell in multiple platform
 
- 
-
