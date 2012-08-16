@@ -543,11 +543,28 @@ function _G.measure( f )
   return (et-st)
 end
 
-if not uv then 
-  _G.laterCalls={}
+if not uv then
+  -- timers on moai: usage: later|every(delay,f); startTimerPoller() or call pollLater() in your app
+  _G.laterCalls={}  
   function _G.later(latency,f)
     table.insert( laterCalls, { callAt = now() + latency, func = f } )
   end
+  function _G.every(interval,f)
+    local wrap = function()
+      f()
+      every( interval, f )
+    end
+    table.insert( laterCalls, { callAt = now() + interval, func = wrap } )
+  end
+  function _G.startTimerPoller()
+    local t = MOAIThread.new()
+    t:run( function()
+        while true do
+          pollLater(now())
+          coroutine.yield()
+        end        
+      end)
+  end  
 
   function _G.pollLater()
     local nt = now()
