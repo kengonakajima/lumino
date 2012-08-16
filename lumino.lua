@@ -49,7 +49,7 @@ _G.epsilon = 0.000001
 function _G.neareq(v1,v2) return (abs(v2-v1) < epsilon) end
 function _G.len(x0,y0,x1,y1) return math.sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) ) end
 function _G.normalize(x,y,l)
-  ll = len(0,0,x,y)
+  local ll = len(0,0,x,y)
   if ll==0 then return 0,0 end
   return x / ll * l, y / ll * l
 end
@@ -1094,7 +1094,12 @@ function _G.httpSendFile(res,path)
     code = 404
     data = "not found"
   end
-  return httpSendRaw(res,code,mt,data)
+
+  if code == 200 then
+    return httpSendRaw(res,code,mt,data)    
+  else
+    return false
+  end  
 end
 
 function _G.httpSendRaw(res,code,ct,data)
@@ -1198,14 +1203,17 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
     return false
   end
   local foundext = false
-  for i,ext in ipairs(exts) do
-    local suf = "." .. ext
-    local at = 1 + ( #url - #suf)
---    print( i,ext, #url, #suf, at )
-    if url:find( suf,at,true ) then
-      local fullpath = docroot .. url
-      return httpSendFile(res,fullpath)
+  if exts then
+    for i,ext in ipairs(exts) do
+      local suf = "." .. ext
+      local at = 1 + ( #url - #suf)
+      --    print( i,ext, #url, #suf, at )
+      if url:find( suf,at,true ) then
+        return httpSendFile(res,docroot .. url)
+      end
     end
+  else
+    return httpSendFile(res,docroot .. url)
   end
   return false
 end
