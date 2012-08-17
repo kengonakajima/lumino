@@ -590,7 +590,7 @@ end
 -- file funcs
 function _G.readFile(path)
   local ok, data = pcall( function()
-      local fp = io.open(path)
+      local fp = io.open(path,"rb")
       local s = fp:read(1024*1024*1024)
       fp:close()
       return s
@@ -600,7 +600,7 @@ function _G.readFile(path)
 end
 function _G.writeFile(path,data)
   local ok, ret = pcall( function()
-      local fp = io.open(path,"w")
+      local fp = io.open(path,"wb")
       local ret = fp:write(data)
       fp:close()
       return ret
@@ -1217,7 +1217,6 @@ function _G.httpServeStaticFiles(req,res,docroot,exts)
   end
   return false
 end
-
 
 if uv then
   _G.exit = process.exit
