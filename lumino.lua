@@ -249,6 +249,15 @@ function _G.table.dupArray(t)
   end
   return out  
 end
+function _G.table.reverse(t)
+  local out={}
+  for i,v in ipairs(t) do
+    out[#t-(i-1)] = t[i]
+  end
+  return out  
+end
+_G.reverse = _G.table.reverse
+
 function _G.map(tbl,fncname, ...)
   assert(fncname)
   local out={}

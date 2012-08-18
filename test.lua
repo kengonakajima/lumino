@@ -198,6 +198,11 @@ assert( tt.d.e == 5 )
 assert( tt.d.f == nil )
 assert( tt.d.g == 7 )
 
+t={ 10,20,30}
+tt=reverse(t)
+assert( tt[1]==30)
+assert( tt[2]==20)
+assert( tt[3]==10)
 
 -- string
 origs="ABCABC"
