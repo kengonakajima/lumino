@@ -227,6 +227,12 @@ for i,v in ipairs(t) do
   assert(v==tt[i])
 end
 
+assert( isalpha( "a" ) == true )
+assert( isalpha( "1" ) == false )
+assert( isalpha( "abc" ) == true )
+assert( isalpha( "ab2c" ) == false )
+assert( isalpha( "ほげ" ) == false )
+assert( isalpha( "ほa" ) == false )
 
 
 -- logging

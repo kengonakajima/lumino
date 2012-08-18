@@ -445,6 +445,18 @@ function _G.string.divide(orig,unit)
   end
   return out  
 end
+function _G.isalpha(str)
+  for i=1,#str do
+    local b = str:byte(i)
+    if (b >= 65 and b <= 90) or ( b >= 97 and b <= 122 ) then
+      -- ok
+    else
+      return false
+    end
+  end
+  return true
+end
+
 
 -- return value nearer to __from__
 function _G.nearer(from,a,b)
