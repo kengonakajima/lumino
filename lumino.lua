@@ -392,6 +392,14 @@ function _G.split(str, delim)
 end
 _G.string.split = split
 
+function _G.utf8div(str)
+  local t={}
+  for c in str:gmatch("[\1-\127\192-\255][\128-\191]*") do
+    table.insert(t,c)
+  end
+  return t  
+end
+
 function _G.dumpbytes(str)
   local out={}
   for i=1,#str do

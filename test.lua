@@ -216,6 +216,13 @@ assert(t[3]=="z abcdefghijklmnopqrstuvwx")
 assert(t[4]=="yz")
 assert(join(t)==origs)
 
+t=utf8div( "風がうたひ　雲ガ應ジ hello\t " )
+tt= {"風","が","う","た","ひ","　","雲","ガ","應","ジ"," ","h","e","l","l","o","\t"," " }
+for i,v in ipairs(t) do
+  assert(v==tt[i])
+end
+
+
 
 -- logging
 dump1( "dump1caption", {a=1,b=2,c=3})
