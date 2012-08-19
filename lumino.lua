@@ -267,6 +267,15 @@ function _G.table.slide(t)
   return out
 end
 _G.slide = _G.table.slide
+function _G.table.unshift(t,val)
+  local out={}
+  out[1] = val
+  for i=1,#t do
+    out[i+1]=t[i]
+  end
+  return out
+end
+_G.unshift = _G.table.unshift
 
 function _G.map(tbl,fncname, ...)
   assert(fncname)

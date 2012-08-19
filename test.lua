@@ -215,6 +215,18 @@ assert(tt[1]==nil)
 tt=slide({2})
 assert(tt[1]==2)
 
+t={10,20}
+tt=unshift(t,40)
+assert(#tt==3)
+assert(tt[1]==40)
+assert(tt[2]==10)
+assert(tt[3]==20)
+t={}
+tt=unshift(t,10)
+assert(#tt==1)
+assert(tt[1]==10)
+
+
 -- string
 origs="ABCABC"
 t=origs:divide(3)
