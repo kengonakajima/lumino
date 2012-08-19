@@ -257,6 +257,16 @@ function _G.table.reverse(t)
   return out  
 end
 _G.reverse = _G.table.reverse
+-- slide left to right
+function _G.table.slide(t)
+  local out={}
+  for i=#t,2,-1 do
+    out[i]=t[i-1]
+  end
+  out[1]=t[#t]
+  return out
+end
+_G.slide = _G.table.slide
 
 function _G.map(tbl,fncname, ...)
   assert(fncname)

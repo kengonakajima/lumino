@@ -64,6 +64,7 @@ assert( ternary(true,1,2)==1)
 assert( cond(false,1,2)==2)
 assert( cond(true,1,2)==1)
 
+
 -- types
 assert( typeof("string") == "string" )
 assert( typeof(1) == "number" )
@@ -198,11 +199,21 @@ assert( tt.d.e == 5 )
 assert( tt.d.f == nil )
 assert( tt.d.g == 7 )
 
-t={ 10,20,30}
+t={10,20,30}
 tt=reverse(t)
 assert( tt[1]==30)
 assert( tt[2]==20)
 assert( tt[3]==10)
+
+t={10,20,30}
+tt=slide(t)
+assert(tt[1]==30)
+assert(tt[2]==10)
+assert(tt[3]==20)
+tt=slide({})
+assert(tt[1]==nil)
+tt=slide({2})
+assert(tt[1]==2)
 
 -- string
 origs="ABCABC"
