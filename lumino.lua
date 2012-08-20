@@ -745,7 +745,8 @@ function _G.csvToTable(csv)
 end
 
 function _G.readCSV(file)
-  local fp = assert(io.open (file))
+  local fp = io.open (file)
+  if not fp then return nil end
   local csv = {} 
   for line in fp:lines() do
     if not line then break end
