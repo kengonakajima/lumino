@@ -644,7 +644,6 @@ function _G.readFile(path)
       return s
     end)
   if ok then return data else return nil end
-  return s
 end
 function _G.writeFile(path,data)
   local ok, ret = pcall( function()
@@ -664,6 +663,19 @@ function _G.existFile(fn)
     return true
   end
 end
+-- expect file exists
+-- ofs: start from 0
+function _G.overwriteFileOffset(path,data,ofs)
+  local ok, ret = pcall( function()
+      local fp = io.open(path,"r+b")
+      fp:seek("set",ofs)
+      local ret = fp:write(data)
+      fp:close()
+      return ret
+    end)
+  if ok then return ret else return nil end
+end
+
 
 -- json funcs
 if _G.JSON then

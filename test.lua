@@ -300,6 +300,7 @@ assert( tt:getChar(2,2) == "x" )
 s = tt:toString()
 print(s)
 
+-- timer
 st=now()
 cnt=0
 while true do
@@ -353,6 +354,24 @@ tl=loadTableFromCSV(path)
 for k,v in pairs(t) do
   assert( tonumber( tl[k] ) == v )
 end
+
+-- r/w
+s="hello world!"
+path = "./file_test.dat"
+writeFile(path,s)
+ss=readFile(path)
+assert(ss==s)
+path2 = "./file_test2.dat"
+s1 = "hell"
+s2 = "o"
+s3 = " world!"
+writeFile(path2,"")
+overwriteFileOffset(path2,s1,0)
+overwriteFileOffset(path2,s2,4)
+overwriteFileOffset(path2,s3,5)
+ss=readFile(path2)
+assert(ss==s)
+
 
 
 -- 2D/3D
