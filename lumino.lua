@@ -837,9 +837,17 @@ end
 function _G.Rect(minx,miny,maxx,maxy)
   local r = { minx=minx, maxx=maxx, miny=miny,maxy=maxy }
   function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end
+  function r:expand(x,y)
+    self.minx, self.miny = self.minx - x, self.miny - y
+    self.maxx, self.maxy = self.maxx + x, self.maxy + y
+  end  
   function r:toData() return removeTypes(self, "function" ) end
   return r
 end
+function _G.fromRectData(r)
+  return Rect( r.minx, r.miny, r.maxx, r.maxy )
+end
+
 function _G.squareRect(cx,cy,w)
   assert(cx and cy and w )
   return Rect( cx-w,cy-w,  cx+w,cy+w )
