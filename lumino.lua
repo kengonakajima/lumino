@@ -837,6 +837,7 @@ end
 function _G.Rect(minx,miny,maxx,maxy)
   local r = { minx=minx, maxx=maxx, miny=miny,maxy=maxy }
   function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end
+  function r:center() return avg( self.minx,self.maxx), avg(self.miny,self.maxy) end
   function r:expand(x,y)
     self.minx, self.miny = self.minx - x, self.miny - y
     self.maxx, self.maxy = self.maxx + x, self.maxy + y

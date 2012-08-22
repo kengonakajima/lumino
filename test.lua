@@ -423,7 +423,10 @@ r = Rect(1,1,2,2)
 t = r:toData()
 assert( t.include==nil)
 assert( t.toData==nil)
-
+r = Rect(1,1,2,2)
+x,y=r:center()
+assert(neareq(x,1.5))
+assert(neareq(y,1.5))
 
 -- 4dirs
 assert( dir2char(DIR.UP) == "^")
