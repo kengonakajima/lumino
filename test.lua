@@ -427,6 +427,12 @@ r = Rect(1,1,2,2)
 x,y=r:center()
 assert(neareq(x,1.5))
 assert(neareq(y,1.5))
+r1 = Rect(1,1,3,3)
+r2 = Rect(2,2,4,4)
+r3 = Rect(4,4,5,5)
+assert(r1:intersectRect(r2))
+assert(not r1:intersectRect(r3))
+
 
 -- 4dirs
 assert( dir2char(DIR.UP) == "^")
