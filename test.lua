@@ -261,7 +261,7 @@ assert( isalpha( "ほa" ) == false )
 -- logging
 dump1( "dump1caption", {a=1,b=2,c=3})
 xpcall( function()
-    not_defined()
+    intently_not_defined()
   end,
   function(e)
     print("printing trace:")
@@ -432,6 +432,11 @@ r2 = Rect(2,2,4,4)
 r3 = Rect(4,4,5,5)
 assert(r1:intersectRect(r2))
 assert(not r1:intersectRect(r3))
+tr = r1:translate(2,2)
+assert(tr.minx==3)
+assert(tr.maxx==5)
+assert(tr.miny==3)
+assert(tr.maxy==5)
 
 
 -- 4dirs

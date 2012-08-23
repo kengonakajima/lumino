@@ -839,6 +839,7 @@ function _G.Rect(minx,miny,maxx,maxy)
   function r:include(x,y) return ( x >= self.minx and x <= self.maxx and y >= self.miny and y <= self.maxy ) end
   function r:center() return avg( self.minx,self.maxx), avg(self.miny,self.maxy) end
   function r:expand(x,y) return Rect( self.minx - x, self.miny - y, self.maxx + x, self.maxy + y ) end
+  function r:translate(dx,dy) return Rect( self.minx + dx, self.miny + dy, self.maxx + dx, self.maxy + dy ) end
   function r:intersectRect(r)
     return ( self.minx < r.maxx and self.maxx > r.minx and self.miny < r.maxy and self.maxy > r.miny )
   end
