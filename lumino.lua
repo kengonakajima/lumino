@@ -432,6 +432,11 @@ function _G.utf8div(str)
   return t  
 end
 
+function _G.hourMin(sec)
+  local s = int(sec)
+  return string.format( "%02d:%02d", int(s/60), s%60 )
+end
+
 function _G.dumpbytes(str)
   local out={}
   for i=1,#str do

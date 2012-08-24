@@ -260,6 +260,7 @@ assert( isalpha( "ab2c" ) == false )
 assert( isalpha( "ほげ" ) == false )
 assert( isalpha( "ほa" ) == false )
 
+assert( hourMin( 100 ) == "01:40" )
 
 -- logging
 dump1( "dump1caption", {a=1,b=2,c=3})
