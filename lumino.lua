@@ -75,6 +75,10 @@ function _G.to_i(s)
 end
 function _G.to_f(s)  return tonumber(s) end
 function _G.to_s(n)  return tostring(n) end
+function _G.round(num,idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
 function _G.range(a,b) return a + ( b - a ) * math.random() end
 function _G.irange(a,b) return math.floor(range(a,b)) end
 function _G.birandom() return (math.random() < 0.5) end

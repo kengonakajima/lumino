@@ -31,6 +31,9 @@ assert( to_i(123.5) == 123 )
 assert( to_f("0.5")==0.5)
 assert( to_s(123)=="123")
 
+assert( round(5.6) == 6 )
+assert( round(5.1) == 5 )
+
 a,b=int2(2.5,3.5)
 assert(a==2 and b==3)
 a,b,c=int3(2.5,3.5,4.5)
