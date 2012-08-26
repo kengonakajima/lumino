@@ -261,7 +261,7 @@ assert( isalpha( "ほげ" ) == false )
 assert( isalpha( "ほa" ) == false )
 
 assert( hourMin( 100 ) == "01:40" )
-assert( abbreviate( "ringo",3 ) == "rin..")
+assert( abbreviate( "ringoooooooooooo",3 ) == "rin..")
 assert( abbreviate( "ringo",7 ) == "ringo")
 
 -- logging

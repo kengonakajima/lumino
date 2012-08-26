@@ -486,7 +486,7 @@ function _G.isalpha(str)
 end
 function _G.abbreviate(s,l)
   if #s > l then
-    return s:sub(1,#s-2) .. ".."
+    return s:sub(1,l) .. ".."
   else
     return s
   end  
