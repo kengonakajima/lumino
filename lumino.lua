@@ -484,6 +484,13 @@ function _G.isalpha(str)
   end
   return true
 end
+function _G.abbreviate(s,l)
+  if #s > l then
+    return s:sub(1,#s-2) .. ".."
+  else
+    return s
+  end  
+end
 
 
 -- return value nearer to __from__
