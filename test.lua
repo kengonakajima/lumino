@@ -322,6 +322,10 @@ measure( function()
     for i=1,1000000 do
     end
   end)
+measureMem( function()
+           print( "inside measureMem..")           
+         end)
+
 
 st=now()
 latecall=0

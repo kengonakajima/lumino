@@ -606,6 +606,12 @@ function _G.measure( f )
   local et = now()
   return (et-st)
 end
+function _G.measureMem( f )
+  local sc = collectgarbage( "count" )
+  f()
+  local ec = collectgarbage( "count" )
+  return (ec-sc)
+end
 
 if not uv then
   -- timers on moai: usage: later|every(delay,f); startTimerPoller() or call pollLater() in your app
