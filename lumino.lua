@@ -1439,6 +1439,18 @@ end
 
   
 -- MOAI funcs
+
+function moai.shortenMOAI()
+  for k,v in pairs(_G) do
+    if k:match( "^MOAI" ) then
+      local nk = k:gsub( "^MOAI","" )
+      assert( not _G[nk], "shortenMOAI: key '" .. nk .. "' already exists!" )
+      _G[nk] = v
+    end  
+  end
+end
+
+
 function moai.now() return MOAISim.getDeviceTime() end
 function moai.propDistance(p0,p1)
   local x0,y0 = p0:getLoc()
