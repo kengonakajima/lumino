@@ -1330,6 +1330,19 @@ if uv then
    _G.parseQueryString = querystring.parse
 
 
+   -- Replace print to use io.stderr directly
+   function _G.print(...)
+     local n = select('#', ...)
+     local arguments = { ... }
+
+     for i = 1, n do
+       arguments[i] = tostring(arguments[i])
+     end
+
+     io.stderr:write(table.concat(arguments, "\t") .. "\n")
+     io.stderr:flush()
+   end
+   
    -- assert
    local realAssert = assert
    function _G.assert(cond,str)
