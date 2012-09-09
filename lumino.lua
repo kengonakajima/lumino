@@ -1320,7 +1320,20 @@ else
 end
 
 
-_G.pp = print
+if luvitutils then
+  function _G.p(...)
+    local n = select('#', ...)
+    local arguments = { ... }
+    for i = 1, n do
+      arguments[i] = luvitutils.dump(arguments[i])
+    end
+    io.stderr:write(table.concat(arguments, "\t") .. "\n")
+  end
+  _G.pp = _G.p
+else
+  _G.p = print
+  _G.pp = print
+end
 
 -- luvit only
 if uv then

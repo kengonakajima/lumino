@@ -290,6 +290,9 @@ dump(t)
 print( num2digitString(50))
 print( num2digitString(150))
 
+p(t)
+pp(t)
+
 -- files
 path = "./_test.log"
 r=writeFile(path,"")
