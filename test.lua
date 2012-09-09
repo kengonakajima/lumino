@@ -328,11 +328,13 @@ measureMem( function()
 
 
 st=now()
-latecall=0
+_G.latecall=0
+print("set later function..")
 later(0.1, function()
     print("deferred func called")
-    latecall = latecall + 1
+    _G.latecall = _G.latecall + 1
   end)
+
 if not uv then 
   while true do
     local nt = now()
@@ -612,9 +614,9 @@ if uv then
     end):listen(57589,"127.0.0.1",function(e)
       assert(not e)
       htok = true
-      every(0.1, function()
-          checkEverythingOK() 
-        end)
+--      every(0.1, function()
+--          checkEverythingOK() 
+--        end)
 
 --       later( 300, function()
 --           local s=cmd("curl http://localhost:57589/index.html")
@@ -697,29 +699,38 @@ print( out )
 
 
 _G.normalOK = true
-
 function checkEverythingOK()
   local result = 1
   if uv then
-    if htok and normalOK and latecall > 0 then
+    if htok and normalOK and _G.latecall > 0 then
       result = 0
     end
   else
-    if normalOK and latecall > 0 then
+    if normalOK and _G.latecall > 0 then
       result = 0
     end
   end
   if result == 1 then
-    print("test failed. htok:",htok,"normalOK:",normalOK, "latecall:", latecall )
+    print("test failed. htok:",htok,"normalOK:",normalOK, "latecall:", _G.latecall )
+    printTrace()
   else
     print("test ok")
   end
   exit(result)
 end
 
-if every then 
+               
+if every then
+  _G.checkOKCount = 0
+
   every(0.1,function()
-      checkEverythingOK()
+  print("okcnt:", _G.checkOKCount )          
+          _G.checkOKCount = _G.checkOKCount + 1
+          if _G.checkOKCount > 5 then
+            checkEverythingOK()
+          else
+            print("skip..")
+          end          
     end)
 else
   checkEverythingOK()

@@ -38,6 +38,8 @@ else
   end
 end
 
+
+
 -- math and lua values
 -- bool to integer
 function _G.isnan(n) return ( n ~= n ) end 
@@ -525,19 +527,19 @@ function _G.printTrace(erro)
 end
 function _G.sprintf(...) return string.format(...) end
 function _G.printf(...)
-  io.stdout:write( sprintf(...) )
-  io.stdout:flush()  
+  io.stderr:write( sprintf(...) )
+  io.stderr:flush()  
 end 
 function _G.prt(...)
   local s = table.concat({...}," ")
-  io.stdout:write(s)
-  io.stdout:flush()
+  io.stderr:write(s)
+  io.stderr:flush()
 end
 
 function _G.datePrint(...)
   local s = table.concat({...}," ")
-  io.stdout:write( "[" .. os.date() .. "] " .. s .. "\n" )
-  io.stdout:flush()  
+  io.stderr:write( "[" .. os.date() .. "] " .. s .. "\n" )
+  io.stderr:flush()  
 end
 function _G.dump(t)
   for i=1,#t do
@@ -1326,7 +1328,19 @@ if uv then
    _G.urldecode = querystring.urldecode
    _G.urlencode = querystring.urlencode
    _G.parseQueryString = querystring.parse
-   
+
+
+   -- assert
+   local realAssert = assert
+   function _G.assert(cond,str)
+     if not cond then
+       io.stderr:write("assert failed!\n" .. str .. "\n\n")
+     end  
+     realAssert(cond,str)
+     return cond
+   end
+
+
   function _G.mkdir(path)
     local err=false
     xpcall(function()
